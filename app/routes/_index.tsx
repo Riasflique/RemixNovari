@@ -4,6 +4,7 @@ import { Page, TextField } from "@navikt/ds-react";
 import navStyles from "@navikt/ds-css/dist/index.css";
 import OrganizationTable from "./_org";
 import PersonsTable from "./_person";
+import "./style.css";
 
 export const meta: MetaFunction = () => {
   return [
@@ -30,8 +31,8 @@ export default function Dashboard() {
 
   return (
     <div>
-      <button onClick={showPersons}>Personer</button>
-      <button onClick={showOrganizations}>Organisasjoner</button>
+      <button className="dashboardButtons" onClick={showPersons}>Personer</button>
+      <button className="dashboardButtons" onClick={showOrganizations}>Organisasjoner</button>
       {showPersonsTable && <PersonsTable />}
       {showOrganizationsTable && <OrganizationTable />}
     </div>

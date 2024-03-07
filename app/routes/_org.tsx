@@ -1,4 +1,5 @@
 import { SetStateAction, useState } from "react";
+import "./style.css";
 
 
 export type OrgType = {
