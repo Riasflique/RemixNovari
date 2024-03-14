@@ -1,7 +1,8 @@
 import React from "react";
-import {BodyShort, Button, Hide, HStack} from "@navikt/ds-react";
-import {LeaveIcon, PersonIcon} from '@navikt/aksel-icons';
+import {BodyShort, Button, Dropdown, Hide, HStack} from "@navikt/ds-react";
+import {LeaveIcon, PersonIcon, MenuHamburgerIcon} from '@navikt/aksel-icons';
 import {useLoaderData} from "@remix-run/react";
+import Menu from "@navikt/ds-react/esm/dropdown/Menu";
 
 export function LayoutAppbar() {
 
@@ -17,6 +18,17 @@ export function LayoutAppbar() {
                         </a>
                         <div className="grid h-full">
                             <HStack align="center">
+
+                                <Hide below="md" asChild>
+                                    <Dropdown>
+                                        <Button icon={<MenuHamburgerIcon aria-hidden />} variant ="tertiary" as={Dropdown.Toggle}>Menu</Button>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Menu.GroupedList.Item onClick={showPersons => {}}> fiks til imorgen!!!
+                                                Persons
+                                            </Dropdown.Menu.GroupedList.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </Hide>
 
                                 <Hide below="md" asChild>
                                     <Button icon={<PersonIcon aria-hidden />} variant="tertiary">

@@ -1,10 +1,11 @@
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import React, { useState } from "react";
-import { Page, TextField } from "@navikt/ds-react";
+import { Page, TextField, Button, VStack, HStack } from "@navikt/ds-react";
 import navStyles from "@navikt/ds-css/dist/index.css";
 import OrganizationTable from "./_org";
 import PersonsTable from "./_person";
 import "./style.css";
+import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -31,8 +32,12 @@ export default function Dashboard() {
 
   return (
     <div>
-      <button className="dashboardButtons" onClick={showPersons}>Personer</button>
-      <button className="dashboardButtons" onClick={showOrganizations}>Organisasjoner</button>
+      <VStack align={"center"}> 
+      <HStack gap="2">
+      <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
+      <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
+      </HStack>
+      </VStack>
       {showPersonsTable && <PersonsTable />}
       {showOrganizationsTable && <OrganizationTable />}
     </div>

@@ -1,5 +1,8 @@
 import { SetStateAction, useState } from "react";
 import "./style.css";
+import { Link } from "@remix-run/react";
+import { Button, HStack, Table, Search } from "@navikt/ds-react";
+import { PersonIcon, PencilIcon} from '@navikt/aksel-icons';
 
 
 export type OrgType = {
@@ -18,6 +21,8 @@ export type OrgType = {
   export default function OrganizationTable() {
     const [organizations, setOrganizations] = useState(orgData);
     const [searchItem, setSearchItem] = useState ('');
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingPerson, setIsEditingPerson] = useState<OrgType |null>(null);
 
     const handleSearchChange = (e: { target: { value: SetStateAction<string>; }; }) => {
         setSearchItem(e.target.value);
@@ -30,32 +35,41 @@ export type OrgType = {
     
     );
     return(
-  <div className="divOrgTable">
-    <h1>Organizations</h1>
-          <button onClick={() => {/* legg til ny org */}}>Add New</button>
-          <input
-            type="text"
-            placeholder="Søk"
-            className="inputOrgs"
-            value={searchItem}
-            onChange={handleSearchChange}/>
-          <table className="tableOrgs">
-            <thead className="tHeadOrgsTableHeader">
-              <tr>
-                <th>Name</th>
-                <th>Asset Id</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrgs.map((org, index) => (
-                <tr key={index}>
-                  <td>{org.orgName}</td>
-                  <td>{org.AssetId}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
- )}
+<div>
+        <form data-theme="dark" role="search">
+        <Button icon={<PersonIcon aria-hidden />}>Add new</Button>
+        <Search
+        label= "Søk"
+        placeholder="Søk etter organisasjon"
+        variant="simple"
+        htmlSize="16"/>
+        </form>
+      <Table>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell />
+          <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Asset Id</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {filteredOrgs.map(({ orgName, AssetId }, i) => {
+          return (
+            <Table.Row
+              key={i + orgName}
+              content=""
+            >
+              <Table.DataCell scope="row">{orgName}</Table.DataCell>
+              <Table.DataCell>{AssetId}</Table.DataCell>
+              <Button size="xsmall" icon={<PencilIcon title="Rediger" />} />
+              
+            </Table.Row>
+          );
+        })}
+      </Table.Body>
+    </Table>
+    </div>
+    );
+  };
   
   export {orgData};
