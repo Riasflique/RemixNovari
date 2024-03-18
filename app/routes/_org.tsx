@@ -24,16 +24,13 @@ export type OrgType = {
     const [isEditing, setIsEditing] = useState(false);
     const [editingPerson, setIsEditingPerson] = useState<OrgType |null>(null);
 
-    const handleSearchChange = (e: { target: { value: SetStateAction<string>; }; }) => {
-        setSearchItem(e.target.value);
-  };
-
+    const handleSearchChange = (value: string) => {
+      setSearchItem(value);
+    };
 
   const filteredOrgs = organizations.filter(organizations =>
     organizations.orgName.toLowerCase().includes(searchItem.toLowerCase()) || 
-    organizations.AssetId.toLowerCase().includes(searchItem.toLowerCase()),
-    
-    );
+    organizations.AssetId.toLowerCase().includes(searchItem.toLowerCase()));
     return(
 <div>
         <form data-theme="dark" role="search">
@@ -42,12 +39,14 @@ export type OrgType = {
         label= "Søk"
         placeholder="Søk etter organisasjon"
         variant="simple"
-        htmlSize="16"/>
+        htmlSize="16"
+        onChange={handleSearchChange}
+        value={searchItem}/>
+
         </form>
       <Table>
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell />
           <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
           <Table.HeaderCell scope="col">Asset Id</Table.HeaderCell>
         </Table.Row>

@@ -1,8 +1,10 @@
 import { SetStateAction, useState } from "react";
 import "./style.css";
 import { PencilIcon } from "@navikt/aksel-icons";
-import { Button, HStack, Table, Search } from "@navikt/ds-react";
+import { Button, HGrid, Table, Search, Modal, BodyLong, TextField} from "@navikt/ds-react";
 import { PersonIcon } from '@navikt/aksel-icons';
+import { useRef } from "react";
+import { filter } from "node_modules/cypress/types/bluebird";
 
 
 export type PersType = {
@@ -40,21 +42,29 @@ export type PersType = {
     const [persons, setPersons] = useState(persData);
     const [searchItem, setSearchItem] = useState ('');
     const [isEditing, setIsEditing] = useState(false);
-    const [editingPerson, setIsEditingPerson] = useState<PersType |null>(null);
+    const [editingPerson, setEditingPerson] = useState<PersType |null>(null);
 
-    const handleSearchChange = (e: { target: { value: SetStateAction<string>; }; }) => {
-        setSearchItem(e.target.value);
-  };
+    const handleSearchChange = (value: string) => {
+      setSearchItem(value);
+    };
 
   const editPopupWindow = (person: PersType) => {
-    setIsEditingPerson(person);
+    setEditingPerson(person);
     setIsEditing(true)
+  }
+
+  const saveChanges = () => {
+    if (editingPerson) {
+      setPersons(persons.map(person => person.email === editingPerson.email ? editingPerson : person));
+    }
   }
 
 
   const filteredPers = persons.filter(persons =>
     persons.fname.toLowerCase().includes(searchItem.toLowerCase()) || 
     persons.lname.toLowerCase().includes(searchItem.toLowerCase()),);
+
+    const ref = useRef<HTMLDialogElement>(null);
     
 
     return (
@@ -65,8 +75,11 @@ export type PersType = {
         label= "Søk"
         placeholder="Søk etter person"
         variant="simple"
-        htmlSize="16"/>
+        htmlSize="16"
+        onChange={handleSearchChange}
+        value={searchItem}/>
         </form>
+
       <Table zebraStripes>
       <Table.Header>
         <Table.Row>
@@ -74,25 +87,42 @@ export type PersType = {
           <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
           <Table.HeaderCell scope="col">Email</Table.HeaderCell>
           <Table.HeaderCell scope="col">Phone</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Technical</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
-      <Table.Body>
+      <Table.Body> 
         {filteredPers.map(({ fname, lname, email, phone }, i) => {
           return (
             <Table.ExpandableRow
               key={i + fname}
-              content=""
+              content="Roller:"
             >
               <Table.DataCell scope="row">{fname + ' ' + lname}</Table.DataCell>
               <Table.DataCell>{email}</Table.DataCell>
               <Table.DataCell>{phone}</Table.DataCell>
-              <Button size="xsmall" icon={<PencilIcon title="Rediger" />} />
-              
+              <Button size="xsmall" icon={<PencilIcon title="Rediger" onClick={() => editPopupWindow({fname, lname, email, phone})} />} />
             </Table.ExpandableRow>
           );
         })}
       </Table.Body>
     </Table>
+
+
+    <Modal ref={ref} header={{heading: "Rediger"}} open={isEditing} onClose={() => setIsEditing(false)}>
+              <Modal.Body>
+                <BodyLong>
+                  <TextField label="Navn" value={editingPerson?.fname} onChange={(e) => setEditingPerson({ ...editingPerson!, fname: e.target.value })}/>
+                  <TextField label="Etternavn" value={editingPerson?.lname} onChange={(e) => setEditingPerson({ ...editingPerson!, lname: e.target.value })}/>
+                  <TextField label="E-Post" value={editingPerson?.email} onChange={(e) => setEditingPerson({ ...editingPerson!, email: e.target.value })}/>
+                  <TextField label="Telefon" value={editingPerson?.phone} onChange={(e) => setEditingPerson({ ...editingPerson!, phone: e.target.value })}/>
+                </BodyLong>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => setIsEditing(false)}>Avbryt</Button>
+                <Button onClick={saveChanges}>Lagre</Button>
+              </Modal.Footer>
+            </Modal>
+
     </div>
     );
   };
