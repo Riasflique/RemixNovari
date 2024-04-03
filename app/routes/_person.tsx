@@ -5,6 +5,7 @@ import { Button, HGrid, Table, Search, Modal, BodyLong, TextField} from "@navikt
 import { PersonIcon } from '@navikt/aksel-icons';
 import { useRef } from "react";
 import { filter } from "node_modules/cypress/types/bluebird";
+import EditPersonModal from "~/components/layout-modal";
 
 
 export type PersType = {
@@ -53,16 +54,15 @@ export type PersType = {
     setIsEditing(true)
   }
 
-  const saveChanges = () => {
-    if (editingPerson) {
-      setPersons(persons.map(person => person.email === editingPerson.email ? editingPerson : person));
-    }
+  const saveChanges = (updatedPerson: PersType) => {
+    setPersons(persons.map(person => person.email === updatedPerson.email ? updatedPerson: person));
+    setIsEditing(false);
   }
 
 
   const filteredPers = persons.filter(persons =>
     persons.fname.toLowerCase().includes(searchItem.toLowerCase()) || 
-    persons.lname.toLowerCase().includes(searchItem.toLowerCase()),);
+    persons.lname.toLowerCase().includes(searchItem.toLowerCase()));
 
     const ref = useRef<HTMLDialogElement>(null);
     
@@ -108,21 +108,12 @@ export type PersType = {
     </Table>
 
 
-    <Modal ref={ref} header={{heading: "Rediger"}} open={isEditing} onClose={() => setIsEditing(false)}>
-              <Modal.Body>
-                <BodyLong>
-                  <TextField label="Navn" value={editingPerson?.fname} onChange={(e) => setEditingPerson({ ...editingPerson!, fname: e.target.value })}/>
-                  <TextField label="Etternavn" value={editingPerson?.lname} onChange={(e) => setEditingPerson({ ...editingPerson!, lname: e.target.value })}/>
-                  <TextField label="E-Post" value={editingPerson?.email} onChange={(e) => setEditingPerson({ ...editingPerson!, email: e.target.value })}/>
-                  <TextField label="Telefon" value={editingPerson?.phone} onChange={(e) => setEditingPerson({ ...editingPerson!, phone: e.target.value })}/>
-                </BodyLong>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button onClick={() => setIsEditing(false)}>Avbryt</Button>
-                <Button onClick={saveChanges}>Lagre</Button>
-              </Modal.Footer>
-            </Modal>
-
+        <EditPersonModal
+          isOpen={isEditing}
+          person={editingPerson}
+          onSave={saveChanges}
+          onClose={() => setIsEditing(false)}
+          />
     </div>
     );
   };

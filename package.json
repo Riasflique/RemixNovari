@@ -2,6 +2,7 @@
   "name": "remix-student-template",
   "private": true,
   "sideEffects": false,
+  "proxy": "http://localhost:8080",
   "scripts": {
     "build": "remix build",
     "dev": "remix dev --manual",
@@ -20,7 +21,7 @@
     "isbot": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix": "^2.8.0"
+    "remix": "^2.8.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.6.0",
