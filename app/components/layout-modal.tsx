@@ -16,9 +16,16 @@ const EditPersonModal: React.FC<EditPersonModalProps> = ({ isOpen, person, onSav
     setEditingPerson(person);
   }, [person]);
 
+  const handleChange = (field: keyof PersType, value: string) => {
+    if (editingPerson) {
+      setEditingPerson({ ...editingPerson, [field]: value });
+    }
+  };
+
   const handleSave = () => {
     if (editingPerson) {
       onSave(editingPerson);
+      setEditingPerson(null); // Reset editingPerson state after saving
     }
   };
 
@@ -26,10 +33,10 @@ const EditPersonModal: React.FC<EditPersonModalProps> = ({ isOpen, person, onSav
     <Modal open={isOpen} onClose={onClose} header={{ heading: 'Rediger' }}>
       <Modal.Body>
         <BodyLong>
-          <TextField label="Navn" value={editingPerson?.fname || ''} onChange={(e) => setEditingPerson({ ...editingPerson!, fname: e.target.value })}/>
-          <TextField label="Etternavn" value={editingPerson?.lname || ''} onChange={(e) => setEditingPerson({ ...editingPerson!, lname: e.target.value })}/>
-          <TextField label="E-Post" value={editingPerson?.email || ''} onChange={(e) => setEditingPerson({ ...editingPerson!, email: e.target.value })}/>
-          <TextField label="Telefon" value={editingPerson?.phone || ''} onChange={(e) => setEditingPerson({ ...editingPerson!, phone: e.target.value })}/>
+          <TextField label="Navn" value={editingPerson?.fname || ''} onChange={(e) => handleChange('fname', e.target.value)}/>
+          <TextField label="Etternavn" value={editingPerson?.lname || ''} onChange={(e) => handleChange('lname', e.target.value)}/>
+          <TextField label="E-Post" value={editingPerson?.email || ''} onChange={(e) => handleChange('email', e.target.value)}/>
+          <TextField label="Telefon" value={editingPerson?.phone || ''} onChange={(e) => handleChange('phone', e.target.value)}/>
         </BodyLong>
       </Modal.Body>
       <Modal.Footer>
@@ -39,5 +46,6 @@ const EditPersonModal: React.FC<EditPersonModalProps> = ({ isOpen, person, onSav
     </Modal>
   );
 };
+
 
 export default EditPersonModal;
