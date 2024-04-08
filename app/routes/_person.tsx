@@ -9,6 +9,7 @@ export type PersType = {
     lname: string;
     email: string;
     phone: string;
+    roller: string;
 };
 
 const persData: PersType[] = [
@@ -16,25 +17,29 @@ const persData: PersType[] = [
         fname: 'Luke',
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
-        phone: '99440055'
+        phone: '99440055',
+        roller: 'test'
     },
     { 
         fname: 'Anakin',
         lname: 'Skywalker',
         email: 'Anakin.skywalker@galacticempire.com',
-        phone: '99550066'
+        phone: '99550066',
+        roller: 'test'
     },
     {
         fname: 'Thomas',
         lname: 'Kirkeng',
         email: 'thomas.kirkeng@darkside.com',
-        phone: '40493581'
+        phone: '40493581',
+        roller: 'test'
     },
     {
         fname: 'Andris',
         lname: 'Hoiseth',
         email: 'andris.hoiseth@chebacca.com',
-        phone: '33994455'
+        phone: '33994455',
+        roller: 'test'
     }
 ];
 
@@ -59,10 +64,11 @@ export default function PersonsTable() {
   };
 
     const columns = [
-        { label: '', key: '' }, //empty column to move header 1 step away!
+        { label: '', key: 'fname' }, //empty column to move header 1 step away!
         { label: 'Navn', key: 'fname' },
         { label: 'Email', key: 'email' },
         { label: 'Phone', key: 'phone' },
+        { label: 'Roller' ,key: 'roller'}
     ];
 
     const renderRow = (person: PersType, index: number) => (
@@ -71,6 +77,7 @@ export default function PersonsTable() {
             <Table.DataCell scope="row">{person.fname + ' ' + person.lname}</Table.DataCell>
             <Table.DataCell>{person.email}</Table.DataCell>
             <Table.DataCell>{person.phone}</Table.DataCell>
+            <Table.DataCell>{person.roller}</Table.DataCell>
             <Button size="xsmall" icon={<PencilIcon title="Rediger" onClick={() => editPopupWindow(person)} />} />
         </Table.ExpandableRow>
     );

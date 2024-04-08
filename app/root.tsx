@@ -21,11 +21,12 @@ import {json} from "@remix-run/node";
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }, { rel: "stylesheet", href: navStyles }] : []),
 ];
-
+/*
 export async function loader(){
   const displayName = await MeApi.fetchDisplayName();
   return json({ displayName });
 }
+*/
 
 
 export function ErrorBoundary() {

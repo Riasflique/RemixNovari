@@ -19,11 +19,14 @@ export const meta: MetaFunction = () => {
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles }];
 
-//export async function loader({request}: LoaderFunctionArgs) {
-//  return json(await fetchDisplayName());
+/*export async function loader({request}: LoaderFunctionArgs) {
+  return json(await fetchDisplayName());
   
- // }
- export const loader = ({ request }) => {
+ }
+ */
+
+ export const loader = ({ }) => {
+  // `request` is the server request object, you can consume headers or url search parameters
   return json(MeApi.fetchDisplayName());
 }
 

@@ -37,6 +37,7 @@ const EditPersonModal: React.FC<EditPersonModalProps> = ({ isOpen, person, onSav
           <TextField label="Etternavn" value={editingPerson?.lname || ''} onChange={(e) => handleChange('lname', e.target.value)}/>
           <TextField label="E-Post" value={editingPerson?.email || ''} onChange={(e) => handleChange('email', e.target.value)}/>
           <TextField label="Telefon" value={editingPerson?.phone || ''} onChange={(e) => handleChange('phone', e.target.value)}/>
+          <TextField label="Roller" value={editingPerson?.roller || ''} onChange={(e) => handleChange('roller', e.target.value)}></TextField>
         </BodyLong>
       </Modal.Body>
       <Modal.Footer>

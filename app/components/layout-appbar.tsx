@@ -6,7 +6,7 @@ import Menu from "@navikt/ds-react/esm/dropdown/Menu";
 
 export function LayoutAppbar() {
 
-    const { displayName } = useLoaderData();
+    const displayName = useLoaderData();
 
     return (
 
@@ -33,7 +33,7 @@ export function LayoutAppbar() {
                                 <Hide below="md" asChild>
                                     <Button icon={<PersonIcon aria-hidden />} variant="tertiary">
                                         <BodyShort weight="semibold" truncate className="max-w-[10vw]">
-                                            {displayName.fullName}
+                                            displayName.fullName
                                         </BodyShort>
                                     </Button>
                                 </Hide>
