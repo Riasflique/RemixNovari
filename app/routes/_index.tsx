@@ -25,7 +25,7 @@ export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles 
  }
  */
 
- export const loader = ({ }) => {
+export const loader = ({ }) => {
   // `request` is the server request object, you can consume headers or url search parameters
   return json(MeApi.fetchDisplayName());
 }
@@ -44,15 +44,16 @@ export default function Dashboard() {
     setShowPersonsTable(false);
     setShowOrganizationsTable(true);
   };
-  
+
 
   return (
     <div>
-      <VStack align={"center"}> 
-      <HStack gap="2">
-      <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
-      <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
-      </HStack>
+      <VStack align={"center"}>
+        <HStack gap="2">
+          <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
+          <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
+          <p>her ja</p>
+        </HStack>
       </VStack>
       {showPersonsTable && <PersonsTable />}
       {showOrganizationsTable && <OrganizationTable />}
