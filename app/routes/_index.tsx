@@ -52,7 +52,7 @@ export default function Dashboard() {
         <HStack gap="2">
           <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
           <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
-          <p>her ja</p>
+          <div id="ja">her ja</div>
         </HStack>
       </VStack>
       {showPersonsTable && <PersonsTable />}

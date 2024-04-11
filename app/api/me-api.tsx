@@ -34,4 +34,11 @@ const toJava = {
     body: JSON.stringify({ detteSendes })
 };
 fetch('http://localhost:8080/api/resourceString', toJava)
-    .then(response => response.json());
+  .then(response => {
+    if (!response.ok) {
+        throw new Error('Response ikke OK');
+    }
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
