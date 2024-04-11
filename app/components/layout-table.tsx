@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table, Search } from "@navikt/ds-react";
+import { Button, Table, Search, InternalHeader } from "@navikt/ds-react";
 import { PencilIcon } from "@navikt/aksel-icons";
 
 interface TableProps<T> {
@@ -23,8 +23,14 @@ export default function LayoutTable<T>({
     )
   );
 
+  const tableContainerStyle = {
+    margin: '0 auto',
+    width: '69%',
+    maxWidth: '1200px',
+  };
+
   return (
-    <div>
+    <div style={tableContainerStyle}>
       <form data-theme="dark" role="search">
         <Button  variant="primary-neutral" icon={<PencilIcon aria-hidden />}>Add new</Button>
         <Search
@@ -36,6 +42,7 @@ export default function LayoutTable<T>({
           value={searchItem}
         />
       </form>
+
       <Table zebraStripes>
         <Table.Header>
           <Table.Row>
@@ -48,6 +55,6 @@ export default function LayoutTable<T>({
         </Table.Header>
         <Table.Body>{filteredData.map(renderRow)}</Table.Body>
       </Table>
-    </div>
+      </div>
   );
 }
