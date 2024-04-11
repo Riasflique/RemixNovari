@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Button, Table, Search } from "@navikt/ds-react";
-import { PersonIcon, PencilIcon } from "@navikt/aksel-icons";
+import { Button, Table, Search, Heading } from "@navikt/ds-react";
+import { PersonGroupIcon, PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
 import EditPersonModal from "~/components/layout-modal";
 
@@ -18,14 +18,14 @@ const persData: PersType[] = [
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
         phone: '99440055',
-        roller: 'test'
+        roller: 'jedi'
     },
     { 
         fname: 'Anakin',
         lname: 'Skywalker',
         email: 'Anakin.skywalker@galacticempire.com',
         phone: '99550066',
-        roller: 'test'
+        roller: 'sith'
     },
     {
         fname: 'Thomas',
@@ -60,34 +60,41 @@ export default function PersonsTable() {
 
   const saveChanges = (updatedPerson: PersType) => {
       setPersons(persons.map(person => person.email === updatedPerson.email ? updatedPerson: person));
-      setIsEditing(false);
+      setIsEditing(false);  
   };
 
     const columns = [
         { label: '', key: 'fname' }, //empty column to move header 1 step away!
         { label: 'Navn', key: 'fname' },
-        { label: 'Email', key: 'email' },
-        { label: 'Phone', key: 'phone' },
         { label: 'Roller' ,key: 'roller'}
     ];
+    const headertxt = "Person";
 
     const renderRow = (person: PersType, index: number) => (
-      
-        <Table.ExpandableRow key={index + person.fname} content="Roller:">
-            <Table.DataCell scope="row">{person.fname + ' ' + person.lname}</Table.DataCell>
-            <Table.DataCell>{person.email}</Table.DataCell>
-            <Table.DataCell>{person.phone}</Table.DataCell>
-            <Table.DataCell>{person.roller}</Table.DataCell>
-            <Button size="xsmall" icon={<PencilIcon title="Rediger" onClick={() => editPopupWindow(person)} />} />
+        <Table.ExpandableRow key={index + person.fname} content={"Roller: " + person.roller}>
+            <Table.DataCell scope="row">
+                {person.fname + ' ' + person.lname}
+                <div>Email: {person.email}</div>
+                <div>Phone: {person.phone}</div>
+            </Table.DataCell>
+            <Table.DataCell colSpan={4}></Table.DataCell>
+            <Table.Row>
+                <Table.DataCell colSpan={5}>
+                    <Button size="xsmall" icon={<PencilIcon aria-hidden/>} onClick={() => editPopupWindow(person)}></Button>
+                </Table.DataCell>
+            </Table.Row>
         </Table.ExpandableRow>
-    );
 
+    );
     return (
+        
         <div>
+            <PersonGroupIcon></PersonGroupIcon>
+            <h1>Person</h1>
             <LayoutTable
                 data={persData}
                 searchItem={searchItem}
-                handleSearchChange={handleSearchChange}
+                handleSearchChange={handleSearchChange} 
                 columns={columns}
                 renderRow={renderRow}
             />
