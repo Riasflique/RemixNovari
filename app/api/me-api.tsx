@@ -8,7 +8,7 @@ class MeApi {
     }
 
     static async fetchDisplayName() {
-        const response = await fetch('http://localhost:8080/api/resource');
+        const response = await fetch('http://localhost:8080/resource');
         if (response.ok) {
             //console.log(response);
             const data = await response.json();
