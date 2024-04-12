@@ -47,7 +47,8 @@ export default function Dashboard() {
     <div>
       <VStack align={"center"}> 
       <HStack gap="2">
-      <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
+        <p id="test">Dette er en test</p>
+      <Button variant="primary-neutral" onClick={MeApi.test}>Personer</Button>
       <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
       </HStack>
       </VStack>
