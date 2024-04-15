@@ -2,64 +2,67 @@ import { method } from "node_modules/cypress/types/bluebird";
 import { SetStateAction, useState } from "react";
 import { json } from "@remix-run/node";
 
-//const APIURL = "http://localhost:8080/resource"
-//const API_URL = process.env.APIURL;
+// const APIURL = "http://localhost:8080/resource"
+// const API_URL = process.env.APIURL;
 
 class MeApi {
 
     static async fetchDisplayName() {
-
-         const response = await fetch('http://localhost:8080/resource');
-             if (response.ok) {
-                 const data = await response.json();
-                 //console.log(data);
-                 const tab = {data}
-                 //console.log(tab);
+        try {
+            const response = await fetch('http://localhost:8080/resource');
+            if (response.ok) {
+                const data = await response.json();
+                // console.log(data);
+                const tab = {data}
+                // console.log(tab);
                 return tab;
-             } else {
-                 // Handle error response
-                 console.error("Error fetching display name");
-                 throw new Error("Error fetching display name");
-           }
-
+            } else {
+                // Handle non-successful response
+                throw new Error("Failed to fetch display name. Response status: " + response.status);
+            }
+        } catch (error) {
+            console.error("Error fetching display name: ", error);
+            throw error; // Optionally re-throw the error if you want calling code to handle it
+        }
     }
 
     static async test() {
-        
-        const fraApi = document.getElementById("test")?.innerText;
-        let token = fetch("http://localhost:8080/api/resourceString", {
-          headers: {
-            'Content-Type': 'application/json',
-            'Cors': ''
-          },
-          method: 'POST', 
-          mode: 'no-cors',
-          body: JSON.stringify({fraApi}) 
-        });
-      
-        console.log(fraApi);
-        //console.log(document.getElementById("test")?.innerText);
-        MeApi.getResource()
-      };
+        try {
+            const fraApi = document.getElementById("test")?.innerText;
+            let token = await fetch("http://localhost:8080/api/resourceString", {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cors': ''
+                },
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ fraApi })
+            });
 
-    static async getResource(){
-      await fetch("http://localhost:8080/api/test", {
-        method: 'GET',
-       // mode: 'no-cors'
-      })
-        .then(response => {
+            console.log(fraApi);
+            MeApi.getResource();
+        } catch (error) {
+            console.error("Error during 'test' function execution: ", error);
+            // Handle or log the error appropriately
+        }
+    };
+
+    static async getResource() {
+        try {
+            const response = await fetch("http://localhost:8080/api/test", {
+                method: 'GET'
+                // mode: 'no-cors' // Uncomment if needed
+            });
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Failed to get resource. Network response was not ok.');
             }
-            //console.log(response.json())
-            return response.json();
-        })
-        .then(data => {
+            const data = await response.json();
             console.log('Data received from server:', data);
-        })
-        .catch(error => console.error('Error getting data:', error));
+        } catch (error) {
+            console.error('Error getting data:', error);
+        }
     }
 
 }
-    
+
 export default MeApi;
