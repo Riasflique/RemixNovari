@@ -7,6 +7,7 @@ import PersonsTable from "./_person";
 import { Link, json } from "@remix-run/react";
 import MeApi from "~/api/me-api";
 import { useLoaderData } from "@remix-run/react";
+import Kjartan from "~/api/send-resource";
 
 
 export const meta: MetaFunction = () => {
@@ -20,8 +21,8 @@ export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles 
 
 //export async function loader({request}: LoaderFunctionArgs) {
 //  return json(await fetchDisplayName());
-  
- // }
+
+// }
 export const loader: LoaderFunction = ({ request }) => {
   return json(MeApi.fetchDisplayName());
 }
@@ -40,16 +41,16 @@ export default function Dashboard() {
     setShowPersonsTable(false);
     setShowOrganizationsTable(true);
   };
-  
+
 
   return (
     <div>
-      <VStack align={"center"}> 
-      <HStack gap="2">
-        <div id="test">arkiv</div>
-      <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
-      <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
-      </HStack>
+      <VStack align={"center"}>
+        <HStack gap="2">
+          <div id="test">arkiv</div>
+          <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
+          <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
+        </HStack>
       </VStack>
       {showPersonsTable && <PersonsTable />}
       {showOrganizationsTable && <OrganizationTable />}

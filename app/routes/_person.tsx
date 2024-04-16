@@ -3,7 +3,7 @@ import { Button, Table, Search, Heading, Checkbox } from "@navikt/ds-react";
 import { PersonGroupIcon, PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
 import EditPersonModal from "~/components/layout-modal";
-import  MeApi from "~/api/me-api";
+import MeApi from "~/api/me-api";
 import { LoaderFunction, json } from "@remix-run/node";
 
 export type PersType = {
@@ -13,25 +13,25 @@ export type PersType = {
     email: string;
     phone: string;
     roller: string;
-    apiResponse?: { [key: string]: boolean};
+    apiResponse?: { [key: string]: boolean };
 };
 
 const persData: PersType[] = [
-    {   
+    {
         blank: '',
         fname: 'Luke',
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
         phone: '99440055',
-        roller: 'test'
+        roller: 'jedi'
     },
-    { 
+    {
         blank: '',
         fname: 'Anakin',
         lname: 'Skywalker',
         email: 'Anakin.skywalker@galacticempire.com',
         phone: '99550066',
-        roller: 'test'
+        roller: 'sith'
     },
     {
         blank: '',
@@ -53,88 +53,89 @@ const persData: PersType[] = [
 
 export const loader: LoaderFunction = async ({ request }) => {
     return json(await MeApi.fetchDisplayName());
-  }
-  
+}
+
 
 export default function PersonsTable() {
-  const [persons, setPersons] = useState(persData);
-  const [searchItem, setSearchItem] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
-  
-  const handleTestClick = async () => {
-    try {
-        const apiData = await MeApi.test();  
-        console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
-        if (apiData && Object.keys(apiData).length > 0) {
-            const updatedPersons = persons.map(person => ({
-                ...person,
-                apiResponse: {...person.apiResponse, ...apiData}
-            }));
-            setPersons(updatedPersons);
-        } else {
-            console.log("No valid data received from API");
+    const [persons, setPersons] = useState(persData);
+    const [searchItem, setSearchItem] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
+
+    const handleTestClick = async () => {
+        try {
+            const apiData = await MeApi.test();
+            console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
+            if (apiData && Object.keys(apiData).length > 0) {
+                const updatedPersons = persons.map(person => ({
+                    ...person,
+                    apiResponse: { ...person.apiResponse, ...apiData }
+                }));
+                setPersons(updatedPersons);
+            } else {
+                console.log("No valid data received from API");
+            }
+        } catch (error) {
+            console.error("Failed to fetch API data", error);
         }
-    } catch (error) {
-        console.error("Failed to fetch API data", error);
-    }
-};
-
-const handleCheckBoxChange = (personIndex: number, key: string) => {
-    const updatedPersons = [...persons];
-    const person = updatedPersons[personIndex];
-
-    person.apiResponse = {
-        ...person.apiResponse,
-        [key]: !(person.apiResponse && person.apiResponse[key])
     };
 
-    setPersons(updatedPersons);
-}
+    const handleCheckBoxChange = (personIndex: number, key: string) => {
+        const updatedPersons = [...persons];
+        const person = updatedPersons[personIndex];
 
-function getApiContent(person: PersType) {
-    if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
-        return "No data available"; 
+        person.apiResponse = {
+            ...person.apiResponse,
+            [key]: !(person.apiResponse && person.apiResponse[key])
+        };
+
+        setPersons(updatedPersons);
     }
-    return (
-        <div>
-            {Object.entries(person.apiResponse).map(([key, value]) => (
-                <Checkbox 
-                    key={key} 
-                    checked={value}
-                    onChange={() => handleCheckBoxChange(persons.findIndex(person => person.email === person.email), key)}
-                >{key}
-                </Checkbox>
-            ))}
-        </div>
-    );
-    
-}
 
-  const handleSearchChange = (value: string) => {
-      setSearchItem(value);
-  };
+    function getApiContent(person: PersType) {
+        if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
+            return "No data available";
+        }
+        return (
+            <div>
+                {Object.entries(person.apiResponse).map(([key, value]) => (
+                    <Checkbox
+                        key={key}
+                        checked={value}
+                        onChange={() => handleCheckBoxChange(persons.findIndex(person => person.email === person.email), key)}
+                    >{key}
+                    </Checkbox>
+                ))}
+            </div>
+        );
 
-  const editPopupWindow = (person: PersType) => {
-      setEditingPerson(person);
-      setIsEditing(true);
-  };
+    }
 
-  const saveChanges = async (updatedPerson: any) => {
-    await MeApi.updatePerson(updatedPerson);
+    const handleSearchChange = (value: string) => {
+        setSearchItem(value);
+    };
 
-   //setPersons(persons.map(person => person.email === updatedPerson.email ? updatedPerson: person));
-    setIsEditing(false);
-  };
-        const columns: {label: string; key: keyof PersType}[] = [
+    const editPopupWindow = (person: PersType) => {
+        setEditingPerson(person);
+        setIsEditing(true);
+    };
+
+    const saveChanges = async (updatedPerson: any) => {
+        await MeApi.updatePerson(updatedPerson);
+
+        //setPersons(persons.map(person => person.email === updatedPerson.email ? updatedPerson: person));
+        setIsEditing(false);
+    };
+    const columns: { label: string; key: keyof PersType }[] = [
         { label: '', key: 'blank' }, //empty column to move header 1 step away!
         { label: 'Navn', key: 'fname' },
-        { label: 'Roller' ,key: 'roller'}
+        { label: 'Roller', key: 'roller' }
     ];
+    const headertxt = "Person";
 
     const renderRow = (person: PersType, index: number) => (
 
-        <Table.ExpandableRow key={index + person.fname} 
+        <Table.ExpandableRow key={index + person.fname}
             content={getApiContent(person)}>
             <Table.DataCell scope="row">
                 {person.fname + ' ' + person.lname}
@@ -144,21 +145,24 @@ function getApiContent(person: PersType) {
             <Table.DataCell colSpan={4}></Table.DataCell>
             <Table.Row>
                 <Table.DataCell colSpan={5}>
-                    <Button size="xsmall" icon={<PencilIcon aria-hidden/>} onClick={() => editPopupWindow(person)}></Button>
-                    <Button size="xsmall" icon={<PencilIcon aria-hidden/>} onClick={() => handleTestClick()}>Test</Button>
+                    <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => editPopupWindow(person)}></Button>
+                    <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => handleTestClick()}>Test</Button>
                 </Table.DataCell>
             </Table.Row>
         </Table.ExpandableRow>
 
+
     );
     return (
-        
+
+
         <div>
             <h1>Person</h1>
             <LayoutTable
                 data={persons}
                 searchItem={searchItem}
-                handleSearchChange={handleSearchChange} 
+                handleSearchChange={handleSearchChange}
+                handleSearchChange={handleSearchChange}
                 columns={columns}
                 renderRow={renderRow}
             />
