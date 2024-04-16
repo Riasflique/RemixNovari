@@ -8,6 +8,7 @@ import "./style.css";
 import { Link, json } from "@remix-run/react";
 import MeApi from "~/api/me-api";
 import { useLoaderData } from "@remix-run/react";
+import Kjartan from "~/api/send-resource";
 
 
 export const meta: MetaFunction = () => {
@@ -52,7 +53,8 @@ export default function Dashboard() {
         <HStack gap="2">
           <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
           <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
-          <p>her ja</p>
+          <Button variant="primary-neutral" onClick={Kjartan()}>TEST</Button>
+          <div id="ja">her ja</div>
         </HStack>
       </VStack>
       {showPersonsTable && <PersonsTable />}
