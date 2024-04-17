@@ -1,9 +1,18 @@
 import { method } from "node_modules/cypress/types/bluebird";
+<<<<<<< HEAD
+
+const API_URL = process.env.API_URL;
+// Gutta - bruker
+// Gutta123 - passord
+=======
 import { SetStateAction, useState } from "react";
 import { json } from "@remix-run/node";
 
 // const APIURL = "http://localhost:8080/resource"
 // const API_URL = process.env.APIURL;
+>>>>>>> b11b5dc94164e90c12fafd1be4af4e24ecaf5058
+
+const baseURL = "http://localhost:8080/ansatte";
 
 class MeApi {
     static updatePerson(updatedPerson: any) {
@@ -11,6 +20,20 @@ class MeApi {
     }
 
     static async fetchDisplayName() {
+<<<<<<< HEAD
+         const response = await fetch(`http://localhost:5432/resourceString/resource`);
+             if (response.ok) {
+                const data = await response.json();
+                //Check if response is ok
+                console.log(response); 
+                return data;
+             } else {
+                 // Handle error response
+                 console.error("Error fetching display name");
+                 throw new Error("Error fetching display name");
+           }
+        
+=======
         try {
             const response = await fetch('http://localhost:8080/resource');
             if (response.ok) {
@@ -27,6 +50,7 @@ class MeApi {
             console.error("Error fetching display name: ", error);
             throw error; // Optionally re-throw the error if you want calling code to handle it
         }
+>>>>>>> b11b5dc94164e90c12fafd1be4af4e24ecaf5058
     }
 
     static async test() {
