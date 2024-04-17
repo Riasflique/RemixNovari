@@ -1,10 +1,9 @@
-import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import React, { useState } from "react";
 import { Page, TextField, Button, VStack, HStack } from "@navikt/ds-react";
 import navStyles from "@navikt/ds-css/dist/index.css";
 import OrganizationTable from "./_org";
 import PersonsTable from "./_person";
-import "./style.css";
 import { Link, json } from "@remix-run/react";
 import MeApi from "~/api/me-api";
 import { useLoaderData } from "@remix-run/react";
@@ -19,14 +18,11 @@ export const meta: MetaFunction = () => {
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles }];
 
-/*export async function loader({request}: LoaderFunctionArgs) {
-  return json(await fetchDisplayName());
+//export async function loader({request}: LoaderFunctionArgs) {
+//  return json(await fetchDisplayName());
   
- }
- */
-
- export const loader = ({ }) => {
-  // `request` is the server request object, you can consume headers or url search parameters
+ // }
+export const loader: LoaderFunction = ({ request }) => {
   return json(MeApi.fetchDisplayName());
 }
 
@@ -50,6 +46,7 @@ export default function Dashboard() {
     <div>
       <VStack align={"center"}> 
       <HStack gap="2">
+        <div id="test">arkiv</div>
       <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
       <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
       </HStack>
