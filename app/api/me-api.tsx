@@ -1,16 +1,9 @@
 import { method } from "node_modules/cypress/types/bluebird";
-<<<<<<< HEAD
-
-const API_URL = process.env.API_URL;
-// Gutta - bruker
-// Gutta123 - passord
-=======
 import { SetStateAction, useState } from "react";
 import { json } from "@remix-run/node";
 
 // const APIURL = "http://localhost:8080/resource"
 // const API_URL = process.env.APIURL;
->>>>>>> b11b5dc94164e90c12fafd1be4af4e24ecaf5058
 
 const baseURL = "http://localhost:8080/ansatte";
 
@@ -20,22 +13,8 @@ class MeApi {
     }
 
     static async fetchDisplayName() {
-<<<<<<< HEAD
-         const response = await fetch(`http://localhost:5432/resourceString/resource`);
-             if (response.ok) {
-                const data = await response.json();
-                //Check if response is ok
-                console.log(response); 
-                return data;
-             } else {
-                 // Handle error response
-                 console.error("Error fetching display name");
-                 throw new Error("Error fetching display name");
-           }
-        
-=======
         try {
-            const response = await fetch('http://localhost:8080/resource');
+            const response = await fetch("http://localhost:8080/api/resource");
             if (response.ok) {
                 const data = await response.json();
                 // console.log(data);
@@ -43,20 +22,17 @@ class MeApi {
                 // console.log(tab);
                 return tab;
             } else {
-                // Handle non-successful response
                 throw new Error("Failed to fetch display name. Response status: " + response.status);
             }
         } catch (error) {
             console.error("Error fetching display name: ", error);
-            throw error; // Optionally re-throw the error if you want calling code to handle it
+            throw error;
         }
->>>>>>> b11b5dc94164e90c12fafd1be4af4e24ecaf5058
     }
 
-    static async test() {
+    static async postComponent(){
         try {
-            
-            const fraApi = document.getElementById("test")?.innerText;
+            const fraApi = document.getElementById("component")?.innerText;
             await fetch("http://localhost:8080/api/resourceString", {
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,22 +40,21 @@ class MeApi {
                 },
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify({ fraApi})
+                body: JSON.stringify({fraApi})
             });
             console.log(fraApi);
             const resourceData = MeApi.getResource();
             return resourceData;
         } catch (error) {
-            console.error("Error during 'test' function execution: ", error);
+            console.error("PostComponent error: ", error);
             throw error;
         }
     };
 
     static async getResource() {
         try {
-            const response = await fetch("http://localhost:8080/api/test", {
+            const response = await fetch("http://localhost:8080/api/getComponents", {
                 method: 'GET'
-                // mode: 'no-cors' // Uncomment if needed
             });
             if (!response.ok) {
                 throw new Error('Failed to get resource. Network response was not ok.');
@@ -87,7 +62,7 @@ class MeApi {
             const data = await response.json();
                 return this.parseApiResponse(data.message); 
         } catch (error) {
-            console.error('Error getting data:', error);
+            console.error("GetResource error: ", error);
         }
     }
 
@@ -103,7 +78,6 @@ class MeApi {
         }
         return obj;
     }
-
 }
 
 export default MeApi;

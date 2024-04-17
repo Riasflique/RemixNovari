@@ -46,7 +46,7 @@ export default function Dashboard() {
     <div>
       <VStack align={"center"}> 
       <HStack gap="2">
-        <div id="test">arkiv</div>
+        <div id="component">arkiv</div>
       <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
       <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
       </HStack>
