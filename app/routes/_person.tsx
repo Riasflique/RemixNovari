@@ -13,11 +13,11 @@ export type PersType = {
     email: string;
     phone: string;
     roller: string;
-    apiResponse?: { [key: string]: boolean};
+    apiResponse?: { [key: string]: boolean };
 };
 
 const persData: PersType[] = [
-    {   
+    {
         blank: '',
         fname: 'Luke',
         lname: 'Skywalker',
@@ -25,7 +25,7 @@ const persData: PersType[] = [
         phone: '99440055',
         roller: 'test'
     },
-    { 
+    {
         blank: '',
         fname: 'Anakin',
         lname: 'Skywalker',
@@ -64,12 +64,12 @@ export default function PersonsTable() {
 
     const handleTestClick = async () => {
         try {
-            const apiData = await MeApi.test();  
+            const apiData = await MeApi.postComponent();
             console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
             if (apiData && Object.keys(apiData).length > 0) {
                 const updatedPersons = persons.map(person => ({
                     ...person,
-                    apiResponse: {...person.apiResponse, ...apiData}
+                    apiResponse: { ...person.apiResponse, ...apiData }
                 }));
                 setPersons(updatedPersons);
             } else {
@@ -109,16 +109,16 @@ export default function PersonsTable() {
 
     const getApiContent = (person: PersType) => {
         if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
-            return "No data available"; 
+            return "No data available";
         }
-        
+
         const sortedKeys = Object.keys(person.apiResponse).sort();
-        
+
         return (
             <div>
                 {sortedKeys.map((key) => (
-                    <Checkbox 
-                        key={key} 
+                    <Checkbox
+                        key={key}
                         checked={person.apiResponse![key]}
                         onChange={() => handleCheckBoxChange(persons.findIndex(p => p.email === person.email), key)}
                     >
@@ -137,10 +137,10 @@ export default function PersonsTable() {
         console.log("Saving changes for:", person);
     };
 
-    const columns: {label: string; key: keyof PersType}[] = [
+    const columns: { label: string; key: keyof PersType }[] = [
         { label: '', key: 'blank' }, //empty column to move header 1 step away!
         { label: 'Navn', key: 'fname' },
-        { label: 'Roller' ,key: 'roller'}
+        { label: 'Roller', key: 'roller' }
     ];
 
     const renderRow = (person: PersType, index: number) => (
@@ -166,7 +166,7 @@ export default function PersonsTable() {
             <LayoutTable
                 data={persons}
                 searchItem={searchItem}
-                handleSearchChange={handleSearchChange} 
+                handleSearchChange={handleSearchChange}
                 columns={columns}
                 renderRow={renderRow}
             />

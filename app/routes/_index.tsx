@@ -20,8 +20,8 @@ export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles 
 
 //export async function loader({request}: LoaderFunctionArgs) {
 //  return json(await fetchDisplayName());
-  
- // }
+
+// }
 export const loader: LoaderFunction = ({ request }) => {
   return json(MeApi.fetchDisplayName());
 }
@@ -40,17 +40,17 @@ export default function Dashboard() {
     setShowPersonsTable(false);
     setShowOrganizationsTable(true);
   };
-  
+
 
   return (
     <div>
-      <VStack align={"center"}> 
-      <HStack gap="2">
-        <div id="component">arkiv</div>
-      <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
-      <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
-      </HStack>
-    
+      <VStack align={"center"}>
+        <HStack gap="2">
+          <div id="component">arkiv.noark</div>
+          <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
+          <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
+        </HStack>
+
       </VStack>
       {showPersonsTable && <PersonsTable />}
       {showOrganizationsTable && <OrganizationTable />}
