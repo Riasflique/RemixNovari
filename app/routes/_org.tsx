@@ -23,7 +23,7 @@ export default function OrganizationTable() {
     setSearchItem(value);
   };
 
-  const columns = [
+  const columns: {label: string, key: keyof OrgType}[] = [
     { label: 'Navn', key: 'orgName' },
     { label: 'Asset Id', key: 'AssetId' },
   ];
