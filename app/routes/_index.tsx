@@ -7,6 +7,7 @@ import PersonsTable from "./_person";
 import { Link, json } from "@remix-run/react";
 import MeApi from "~/api/me-api";
 import { useLoaderData } from "@remix-run/react";
+import Kjartan from "~/api/send-resource";
 
 
 export const meta: MetaFunction = () => {

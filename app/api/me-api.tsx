@@ -10,7 +10,10 @@ const baseURL = "http://localhost:8080/ansatte";
 class MeApi {
     static updatePerson(updatedPerson: any) {
         throw new Error("Method not implemented.");
+    static updatePerson(updatedPerson: any) {
+        throw new Error("Method not implemented.");
     }
+
 
     static async fetchDisplayName() {
         try {
@@ -18,7 +21,7 @@ class MeApi {
             if (response.ok) {
                 const data = await response.json();
                 // console.log(data);
-                const tab = {data}
+                const tab = { data }
                 // console.log(tab);
                 return tab;
             } else {
@@ -30,7 +33,7 @@ class MeApi {
         }
     }
 
-    static async postComponent(){
+    static async postComponent() {
         try {
             const fraApi = document.getElementById("component")?.innerText;
             await fetch("http://localhost:8080/api/resourceString", {
@@ -40,7 +43,7 @@ class MeApi {
                 },
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify({fraApi})
+                body: JSON.stringify({ fraApi })
             });
             console.log(fraApi);
             const resourceData = MeApi.getResource();
@@ -60,14 +63,14 @@ class MeApi {
                 throw new Error('Failed to get resource. Network response was not ok.');
             }
             const data = await response.json();
-                return this.parseApiResponse(data.message); 
+            return this.parseApiResponse(data.message);
         } catch (error) {
             console.error("GetResource error: ", error);
         }
     }
 
     static async parseApiResponse(dataString: string) {
-        const obj: {[key: string]: boolean} = {};
+        const obj: { [key: string]: boolean } = {};
         const trimBraces = dataString.match(/{(.*)}/)?.[1];
         if (trimBraces) {
             const keyValuePairs = trimBraces.split(', ');

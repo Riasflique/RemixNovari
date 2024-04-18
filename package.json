@@ -19,6 +19,7 @@
     "@remix-run/serve": "^2.6.0",
     "cypress": "^13.6.4",
     "isbot": "^4.1.0",
+    "node": "^18.20.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remix": "^2.8.1"

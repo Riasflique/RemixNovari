@@ -23,7 +23,7 @@ const persData: PersType[] = [
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
         phone: '99440055',
-        roller: 'test'
+        roller: 'jedi'
     },
     {
         blank: '',
@@ -31,7 +31,7 @@ const persData: PersType[] = [
         lname: 'Skywalker',
         email: 'Anakin.skywalker@galacticempire.com',
         phone: '99550066',
-        roller: 'test'
+        roller: 'sith'
     },
     {
         blank: '',
@@ -54,17 +54,28 @@ const persData: PersType[] = [
 export const loader: LoaderFunction = async ({ request }) => {
     return json(await MeApi.fetchDisplayName());
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
 
 export default function PersonsTable() {
     const [persons, setPersons] = useState(persData);
     const [searchItem, setSearchItem] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
+<<<<<<< HEAD
     const [isTestClicked, setIsTestClicked] = useState(false);
 
     const handleTestClick = async () => {
         try {
             const apiData = await MeApi.postComponent();
+=======
+
+    const handleTestClick = async () => {
+        try {
+            const apiData = await MeApi.test();
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
             console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
             if (apiData && Object.keys(apiData).length > 0) {
                 const updatedPersons = persons.map(person => ({
@@ -78,7 +89,10 @@ export default function PersonsTable() {
         } catch (error) {
             console.error("Failed to fetch API data", error);
         }
+<<<<<<< HEAD
         setIsTestClicked(true);
+=======
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
     };
 
     const handleCheckBoxChange = (personIndex: number, key: string) => {
@@ -89,6 +103,7 @@ export default function PersonsTable() {
             ...person.apiResponse,
             [key]: !(person.apiResponse && person.apiResponse[key])
         };
+<<<<<<< HEAD
 
         setPersons(updatedPersons);
     };
@@ -137,14 +152,61 @@ export default function PersonsTable() {
         console.log("Saving changes for:", person);
     };
 
+=======
+
+        setPersons(updatedPersons);
+    }
+
+    function getApiContent(person: PersType) {
+        if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
+            return "No data available";
+        }
+        return (
+            <div>
+                {Object.entries(person.apiResponse).map(([key, value]) => (
+                    <Checkbox
+                        key={key}
+                        checked={value}
+                        onChange={() => handleCheckBoxChange(persons.findIndex(person => person.email === person.email), key)}
+                    >{key}
+                    </Checkbox>
+                ))}
+            </div>
+        );
+
+    }
+
+    const handleSearchChange = (value: string) => {
+        setSearchItem(value);
+    };
+
+    const editPopupWindow = (person: PersType) => {
+        setEditingPerson(person);
+        setIsEditing(true);
+    };
+
+    const saveChanges = async (updatedPerson: any) => {
+        await MeApi.updatePerson(updatedPerson);
+
+        //setPersons(persons.map(person => person.email === updatedPerson.email ? updatedPerson: person));
+        setIsEditing(false);
+    };
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
     const columns: { label: string; key: keyof PersType }[] = [
         { label: '', key: 'blank' }, //empty column to move header 1 step away!
         { label: 'Navn', key: 'fname' },
         { label: 'Roller', key: 'roller' }
     ];
+    const headertxt = "Person";
 
     const renderRow = (person: PersType, index: number) => (
+<<<<<<< HEAD
         <Table.ExpandableRow key={index + person.fname} content={getApiContent(person)}>
+=======
+
+        <Table.ExpandableRow key={index + person.fname}
+            content={getApiContent(person)}>
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
             <Table.DataCell scope="row">
                 {person.fname + ' ' + person.lname}
                 <div>Email: {person.email}</div>
@@ -158,15 +220,29 @@ export default function PersonsTable() {
                 </Table.DataCell>
             </Table.Row>
         </Table.ExpandableRow>
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
     );
 
     return (
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
         <div>
             <h1>Person</h1>
             <LayoutTable
                 data={persons}
                 searchItem={searchItem}
                 handleSearchChange={handleSearchChange}
+<<<<<<< HEAD
+=======
+                handleSearchChange={handleSearchChange}
+>>>>>>> 8adde3d54b890a512afe6465d439273d1449543b
                 columns={columns}
                 renderRow={renderRow}
             />

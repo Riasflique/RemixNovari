@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table, Search } from "@navikt/ds-react";
+import { Button, Table, Search, InternalHeader } from "@navikt/ds-react";
 import { PencilIcon } from "@navikt/aksel-icons";
 
 interface TableProps<T> {
@@ -42,6 +42,7 @@ export default function LayoutTable<T>({
           value={searchItem}
         />
       </form>
+
       <Table zebraStripes>
         <Table.Header>
           <Table.Row>
@@ -54,6 +55,6 @@ export default function LayoutTable<T>({
         </Table.Header>
         <Table.Body>{filteredData.map(renderRow)}</Table.Body>
       </Table>
-    </div>
+      </div>
   );
 }
