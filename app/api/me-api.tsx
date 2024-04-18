@@ -10,8 +10,6 @@ const baseURL = "http://localhost:8080/ansatte";
 class MeApi {
     static updatePerson(updatedPerson: any) {
         throw new Error("Method not implemented.");
-    static updatePerson(updatedPerson: any) {
-        throw new Error("Method not implemented.");
     }
 
 
