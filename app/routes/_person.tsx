@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Table, Search, Heading, Checkbox } from "@navikt/ds-react";
+import { Button, Table, Search, Heading, Checkbox, Dropdown } from "@navikt/ds-react";
 import { PersonGroupIcon, PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
 import EditPersonModal from "~/components/layout-modal";
 import MeApi from "~/api/me-api";
 import { LoaderFunction, json } from "@remix-run/node";
+import { clear } from "console";
 
 export type PersType = {
     blank: string;
@@ -19,7 +20,7 @@ export type PersType = {
 const persData: PersType[] = [
     {
         blank: '',
-        fname: 'Luke',
+        fname: 'test',
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
         phone: '99440055',
@@ -62,9 +63,9 @@ export default function PersonsTable() {
     const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
     const [isTestClicked, setIsTestClicked] = useState(false);
 
-    const handleTestClick = async () => {
+    const handleTestClick = async (domain: string) => {
         try {
-            const apiData = await MeApi.postComponent();
+            const apiData = await MeApi.postComponent(domain);
             console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
             if (apiData && Object.keys(apiData).length > 0) {
                 const updatedPersons = persons.map(person => ({
@@ -80,6 +81,27 @@ export default function PersonsTable() {
         }
         setIsTestClicked(true);
     };
+
+    const handleTestClick2 = async () => {
+        try {
+            const apiData = await MeApi.postComponent();
+            console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
+            if (apiData && Object.keys(apiData).length > 0) {
+                /*const updatedPersons = persons.map(person => ({
+                    ...person,
+                    apiResponse: { ...person.apiResponse, ...apiData }
+                }));
+                setPersons(updatedPersons);*/
+                console.log("YEEEEEHAW")
+            } else {
+                console.log("No valid data received from API");
+            }
+        } catch (error) {
+            console.error("Failed to fetch API data", error);
+        }
+        setIsTestClicked(true);
+    };
+
 
     const handleCheckBoxChange = (personIndex: number, key: string) => {
         const updatedPersons = [...persons];
@@ -111,25 +133,36 @@ export default function PersonsTable() {
         if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
             return "No data available";
         }
+        const cleared = document.getElementById("testt")
+        console.log(cleared)
+        console.log(cleared?.lastChild)
 
-        const sortedKeys = Object.keys(person.apiResponse).sort();
-
-        return (
-            <div>
-                {sortedKeys.map((key) => (
-                    <Checkbox
-                        key={key}
-                        checked={person.apiResponse![key]}
-                        onChange={() => handleCheckBoxChange(persons.findIndex(p => p.email === person.email), key)}
-                    >
-                        {key}
-                    </Checkbox>
-                ))}
-                {isTestClicked && (
-                    <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
-                )}
-            </div>
-        );
+        if (cleared != null && cleared.innerText.length > 0) {
+            console.log("HMMMM")
+            //while (cleared.firstChild) {
+            //    cleared.removeChild(cleared?.lastChild);
+            //  }
+        } else {
+            const sortedKeys = Object.keys(person.apiResponse).sort();
+            return (
+                <div id="testt">
+                    <div id="test2">
+                        {sortedKeys.map((key) => (
+                            <Checkbox
+                                key={key}
+                                checked={person.apiResponse![key]}
+                                onChange={() => handleCheckBoxChange(persons.findIndex(p => p.email === person.email), key)}
+                            >
+                                {key}
+                            </Checkbox>
+                        ))}
+                        {isTestClicked && (
+                            <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
+                        )}
+                    </div>
+                </div>
+            );
+        }
     };
 
     const handleSaveClick = async (person: PersType) => {
@@ -150,12 +183,28 @@ export default function PersonsTable() {
                 {person.fname + ' ' + person.lname}
                 <div>Email: {person.email}</div>
                 <div>Phone: {person.phone}</div>
+                <div>Styr tilgang: DROPDOWN med arkiv.noark?</div>
             </Table.DataCell>
             <Table.DataCell colSpan={4}></Table.DataCell>
             <Table.Row>
                 <Table.DataCell colSpan={5}>
                     <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => editPopupWindow(person)}></Button>
-                    <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => handleTestClick()}>Test</Button>
+                    <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => handleTestClick("administrasjon")}>Test</Button>
+                    <Dropdown>
+                        <Button size="xsmall" as={Dropdown.Toggle}>Ressurstilgang</Button>
+                        <Dropdown.Menu>
+                            <Dropdown.Menu.GroupedList>
+                                <Dropdown.Menu.GroupedList.Heading>Domains</Dropdown.Menu.GroupedList.Heading>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("administrasjon") }}>Administrasjon</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("arkiv") }}>Arkiv</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("felles") }}>Felles</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("personvern") }}>Personvern</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("ressurser") }}>Ressurser</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("utdanning") }}>Utdanning</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("okonomi") }}>Økonomi</Dropdown.Menu.GroupedList.Item>
+                            </Dropdown.Menu.GroupedList>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </Table.DataCell>
             </Table.Row>
         </Table.ExpandableRow>

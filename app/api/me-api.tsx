@@ -31,7 +31,7 @@ class MeApi {
         }
     }
 
-    static async postComponent() {
+    static async postComponent(c: string) {
         try {
             const fraApi = document.getElementById("component")?.innerText;
             await fetch("http://localhost:8080/api/resourceString", {
@@ -41,10 +41,10 @@ class MeApi {
                 },
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify({ fraApi })
+                body: JSON.stringify({ c })
             });
             console.log(fraApi);
-            const resourceData = MeApi.getResource();
+            const resourceData = MeApi.getComponents();
             return resourceData;
         } catch (error) {
             console.error("PostComponent error: ", error);
@@ -52,7 +52,7 @@ class MeApi {
         }
     };
 
-    static async getResource() {
+    static async getComponents() {
         try {
             const response = await fetch("http://localhost:8080/api/getComponents", {
                 method: 'GET'
@@ -68,17 +68,47 @@ class MeApi {
     }
 
     static async parseApiResponse(dataString: string) {
-        const obj: { [key: string]: boolean } = {};
-        const trimBraces = dataString.match(/{(.*)}/)?.[1];
-        if (trimBraces) {
-            const keyValuePairs = trimBraces.split(', ');
-            keyValuePairs.forEach(pair => {
+        const obj: { [key: string]: boolean } = {};             // Nytt objekt der key er en String og value er boolean (ressurs-hashmappet fra backend)
+        const trimBraces = dataString.match(/{(.*)}/)?.[1];     // Får tak i data mellom {} 
+        if (trimBraces) {                                       // Hvis det er noe data der (hvis trimbraces ikke er null)
+            const keyValuePairs = trimBraces.split(', ');       // splittes teksten på komma mellomrom (slik dataen er oppdelt i backend)
+            keyValuePairs.forEach(pair => {                     // For hvert par splittes de på '=' slik at ressurs blir key og boolsk verdi blir value
                 const [key, value] = pair.split('=');
-                obj[key.trim()] = value.trim() === 'true';
+                obj[key.trim()] = value.trim() === 'true';      // kobler key/value par til obj
             });
         }
         return obj;
     }
+
+    static async parseApiResponse2(dataString: string) {
+        const list: string[] = [];
+        const trimBraces = dataString.match(/{(.*)}/)?.[1];
+        if (trimBraces) {
+            const items = trimBraces.split(', ');
+            items.forEach(item => {
+                list.push(item.trim());
+            });
+        }
+        return list;
+    }
+
+    static async parseApiResponse3(dataString: string) {
+        const list: string[] = [];
+        const trimBraces = dataString.match(/{(.*)}/)?.[1];
+        if (trimBraces) {
+            const items = trimBraces.split(', ');
+            items.forEach(item => {
+                const packageResource = item.replace("no.fint.model.", "")
+                const words = packageResource.split('.');
+                words.forEach(word => {
+                    list.push(word.trim().split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '));
+                });
+            });
+        }
+        return list;
+    }
+
+
 }
 
 export default MeApi;
