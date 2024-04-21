@@ -99,7 +99,7 @@ export default function PersonsTable() {
 
             if (apiData2 && Object.keys(apiData2).length > 0) {
                 //apiData.forEach(
-                //for (let i = 0; i > apiData2.length; i++) {
+                //for (let i = 0; i > apiData2.length; i++) { // brukes for-løkka så kommer det ingenting ut
                 //    try {
                 apiTest = await MeApi.postComponent(apiData2[0])
                 console.log("api TEST - ", apiTest)
