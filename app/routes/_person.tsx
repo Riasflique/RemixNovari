@@ -157,11 +157,12 @@ export default function PersonsTable() {
         if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
             return "No data available";
         }
-        var sortedKeys = Object.keys(person.apiResponse).sort(); // Dette er en liste med ressurser som jeg prøver å nullstille
+        let sortedKeys = Object.keys(person.apiResponse).sort(); // Dette er en liste med ressurser som jeg prøver å nullstille
         const cleared = document.getElementById("testt")
-        console.log("FØRSTE")
+        console.log("SortedKeys")
         console.log(sortedKeys)
 
+        /*
         if (Object.keys(person.apiResponse).length > 0) {
 
             sortedKeys = []   // burde funke for å gjøre lista tom
@@ -171,9 +172,10 @@ export default function PersonsTable() {
                 sortedKeys.pop(); // burde også funke, men det skjer ikke noe
             }
         }
-        sortedKeys = Object.keys(person.apiResponse).sort();
-        console.log("TREDJE")
-        console.log(sortedKeys)
+        */
+        //sortedKeys = Object.keys(person.apiResponse).sort();
+        //console.log("TREDJE")
+        //console.log(sortedKeys)
         //if (pakke != undefined) {
         return (
             <div id="testt">
