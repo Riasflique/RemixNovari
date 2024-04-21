@@ -46,9 +46,9 @@ export default function Dashboard() {
     <div>
       <VStack align={"center"}>
         <HStack gap="2">
-          <div id="component">arkiv.noark</div>
-          <Button variant="primary-neutral" onClick={showPersons}>Personer</Button>
-          <Button variant="primary-neutral" onClick={showOrganizations}>Organisasjoner</Button>
+          <div id="component"></div>
+          <Button variant="primary-neutral" onClick={showPersons}>Klienter</Button>
+          <Button variant="primary-neutral" onClick={showOrganizations}>Adapter</Button>
         </HStack>
 
       </VStack>
