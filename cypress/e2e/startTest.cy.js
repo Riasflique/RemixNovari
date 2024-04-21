@@ -24,6 +24,7 @@ describe('example to-do app', () => {
     })
   
     it('opens persons button and clicks dropdown menu', () => {
+      cy.get('header').should('be.visible'); 
       // We use the `cy.get()` command to get all elements that match the selector.
       // Then, we use `should` to assert that there are two matched items,
       // which are the two default items.
@@ -49,4 +50,12 @@ describe('example to-do app', () => {
 
   
       })
+
+    it('Runs the API and opens the modal to get the API data', () => {
+      cy.get('.navds-vstack').should('exist');
+      cy.get('.navds-vstack > .navds-stack > :nth-child(2)').click()
+      cy.get(':nth-child(1) > .navds-table__row > .navds-table__data-cell > :nth-child(2)').click()
+      cy.get(':nth-child(1) > .navds-table__row > .navds-table__data-cell > .navds-button--icon-only').click()
+    })
+      
 })
