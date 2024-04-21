@@ -54,7 +54,7 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
                   <Table.Row>
                     <Table.DataCell>
                       <button className="expand-button" onClick={() => toggleRow(key)}>
-                        {}
+                        {key} {/* viser API dataene på dropdown knappen */}
                       </button>
                     </Table.DataCell>
                   </Table.Row>
@@ -66,7 +66,7 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
                           checked={apiData[key]}
                           onChange={() => handleRoleChange(key)}
                         >
-                          {key}
+                          {key} {/*Key byttes ut med API kode som skal vise underklassene i dropdown menyen (current key viser bare det vi har fra før atm) */ }
                         </Checkbox>
                       </Table.DataCell>
                     </Table.Row>
