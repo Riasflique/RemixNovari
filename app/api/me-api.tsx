@@ -44,7 +44,7 @@ class MeApi {
                 body: JSON.stringify({ c })
             });
             console.log(fraApi);
-            const resourceData = MeApi.getComponents();
+            const resourceData = MeApi.getResources();
             return resourceData;
         } catch (error) {
             console.error("PostComponent error: ", error);
@@ -52,9 +52,9 @@ class MeApi {
         }
     };
 
-    static async getComponents() {
+    static async getResources() {
         try {
-            const response = await fetch("http://localhost:8080/api/getComponents", {
+            const response = await fetch("http://localhost:8080/api/getResources", {
                 method: 'GET'
             });
             if (!response.ok) {
@@ -64,6 +64,43 @@ class MeApi {
             return this.parseApiResponse(data.message);
         } catch (error) {
             console.error("GetResource error: ", error);
+        }
+    }
+
+    static async postPackage(p: string) {
+        try {
+            //const fraApi = document.getElementById("component")?.innerText;
+            await fetch("http://localhost:8080/api/packageString", {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cors': ''
+                },
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ p })
+            });
+            //console.log(fraApi);
+            const packageData = MeApi.getPackages();
+            return packageData;
+        } catch (error) {
+            console.error("PostPackage error: ", error);
+            throw error;
+        }
+    };
+
+
+    static async getPackages() {
+        try {
+            const response = await fetch("http://localhost:8080/api/getPackages", {
+                method: 'GET'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get resource. Network response was not ok.');
+            }
+            const data = await response.json();
+            return this.parseApiResponse3(data.message);
+        } catch (error) {
+            console.error("GetPackage error: ", error);
         }
     }
 
@@ -92,16 +129,24 @@ class MeApi {
         return list;
     }
 
+    // Parser pakke-string
     static async parseApiResponse3(dataString: string) {
         const list: string[] = [];
         const trimBraces = dataString.match(/{(.*)}/)?.[1];
         if (trimBraces) {
             const items = trimBraces.split(', ');
             items.forEach(item => {
-                const packageResource = item.replace("no.fint.model.", "")
+                const packageResource = item.replace("no.fint.model.", "").replace("=null", "")
                 const words = packageResource.split('.');
-                words.forEach(word => {
-                    list.push(word.trim().split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '));
+
+                const combined = [];
+
+                for (let i = 0; i < words.length; i += 2) {
+                    combined.push(words[i] + (words[i + 1] ? `.${words[i + 1]}` : ""));
+                }
+
+                combined.forEach(word => {
+                    list.push(word.trim().split('_').map(part => part.charAt(0) + part.slice(1)).join(' '));
                 });
             });
         }

@@ -6,6 +6,7 @@ import EditPersonModal from "~/components/layout-modal";
 import MeApi from "~/api/me-api";
 import { LoaderFunction, json } from "@remix-run/node";
 import { clear } from "console";
+import { forEach } from "node_modules/cypress/types/lodash";
 
 export type PersType = {
     blank: string;
@@ -17,10 +18,14 @@ export type PersType = {
     apiResponse?: { [key: string]: boolean };
 };
 
+export type ResourceType = {
+    apiResponse?: { [key: string]: boolean }; // holder med string??
+};
+
 const persData: PersType[] = [
     {
         blank: '',
-        fname: 'test',
+        fname: 'Luke',
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
         phone: '99440055',
@@ -62,17 +67,22 @@ export default function PersonsTable() {
     const [isEditing, setIsEditing] = useState(false);
     const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
     const [isTestClicked, setIsTestClicked] = useState(false);
+    const [packages, setPackages] = useState(null);
+    //let apiData2: string[] | undefined;
+    let apiTest: { [key: string]: boolean; } | undefined;
+    //const [apiData2, setApiData2] = useState<string[] | undefined>
 
     const handleTestClick = async (domain: string) => {
         try {
             const apiData = await MeApi.postComponent(domain);
-            console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
+            console.log("Fetched API Data:", apiData);
             if (apiData && Object.keys(apiData).length > 0) {
-                const updatedPersons = persons.map(person => ({
+                var updatedPersons = persons.map(person => ({
                     ...person,
                     apiResponse: { ...person.apiResponse, ...apiData }
                 }));
                 setPersons(updatedPersons);
+                // DENNE må nullstilles, ikke lista i comboboxen
             } else {
                 console.log("No valid data received from API");
             }
@@ -82,16 +92,30 @@ export default function PersonsTable() {
         setIsTestClicked(true);
     };
 
-    const handleTestClick2 = async () => {
+    const handleTestClick2 = async (component: string) => {
         try {
-            const apiData = await MeApi.postComponent();
-            console.log("Fetched API Data:", apiData);  // Ensure this logs expected data
-            if (apiData && Object.keys(apiData).length > 0) {
-                /*const updatedPersons = persons.map(person => ({
+            const apiData2 = await MeApi.postPackage(component);
+            console.log("Fetched API Data: APIDATA2", apiData2);  // Dette er pakkene/komponentene
+
+            if (apiData2 && Object.keys(apiData2).length > 0) {
+                //apiData.forEach(
+                //for (let i = 0; i > apiData2.length; i++) {
+                //    try {
+                apiTest = await MeApi.postComponent(apiData2[0])
+                console.log("api TEST - ", apiTest)
+                //    } catch (error) {
+                //        console.error("apiData2 fetch ERROR - ", error);
+                //    }
+                //}
+
+
+
+                //)
+                const updatedPersons = persons.map(person => ({
                     ...person,
-                    apiResponse: { ...person.apiResponse, ...apiData }
+                    apiResponse: { ...person.apiResponse, ...apiTest }
                 }));
-                setPersons(updatedPersons);*/
+                setPersons(updatedPersons);
                 console.log("YEEEEEHAW")
             } else {
                 console.log("No valid data received from API");
@@ -99,7 +123,7 @@ export default function PersonsTable() {
         } catch (error) {
             console.error("Failed to fetch API data", error);
         }
-        setIsTestClicked(true);
+        //setIsTestClicked(true);
     };
 
 
@@ -150,22 +174,39 @@ export default function PersonsTable() {
         sortedKeys = Object.keys(person.apiResponse).sort();
         console.log("TREDJE")
         console.log(sortedKeys)
+        //if (pakke != undefined) {
         return (
             <div id="testt">
                 {sortedKeys.map((key) => (
+                    <div className="comp"><br></br>{key}
+
+                        {sortedKeys.map((key) => (
+                            <Checkbox
+                                key={key}
+                                checked={person.apiResponse![key]}
+                                onChange={() => console.log("CHANGE")}
+                            >
+                                {key}
+                            </Checkbox>
+                        ))}
+                    </div>
+                    /*
                     <Checkbox
                         key={key}
                         checked={person.apiResponse![key]}
                         onChange={() => handleCheckBoxChange(persons.findIndex(p => p.email === person.email), key)}
                     >
                         {key}
-                    </Checkbox>
+                    </Checkbox>*/
                 ))}
                 {isTestClicked && (
                     <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
                 )}
+
             </div>
         );
+        //} else {
+
 
     };
 
@@ -192,7 +233,6 @@ export default function PersonsTable() {
             <Table.Row>
                 <Table.DataCell colSpan={5}>
                     <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => editPopupWindow(person)}></Button>
-                    <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => handleTestClick("administrasjon")}>Test</Button>
                     <Dropdown>
                         <Button size="xsmall" as={Dropdown.Toggle}>Ressurstilgang</Button>
                         <Dropdown.Menu>
@@ -204,7 +244,7 @@ export default function PersonsTable() {
                                 <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("personvern") }}>Personvern</Dropdown.Menu.GroupedList.Item>
                                 <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("ressurser") }}>Ressurser</Dropdown.Menu.GroupedList.Item>
                                 <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("utdanning") }}>Utdanning</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick("okonomi") }}>Økonomi</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("okonomi") }}>Økonomi</Dropdown.Menu.GroupedList.Item>
                             </Dropdown.Menu.GroupedList>
                         </Dropdown.Menu>
                     </Dropdown>
