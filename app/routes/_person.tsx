@@ -133,36 +133,40 @@ export default function PersonsTable() {
         if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
             return "No data available";
         }
+        var sortedKeys = Object.keys(person.apiResponse).sort(); // Dette er en liste med ressurser som jeg prøver å nullstille
         const cleared = document.getElementById("testt")
-        console.log(cleared)
-        console.log(cleared?.lastChild)
+        console.log("FØRSTE")
+        console.log(sortedKeys)
 
-        if (cleared != null && cleared.innerText.length > 0) {
-            console.log("HMMMM")
-            //while (cleared.firstChild) {
-            //    cleared.removeChild(cleared?.lastChild);
-            //  }
-        } else {
-            const sortedKeys = Object.keys(person.apiResponse).sort();
-            return (
-                <div id="testt">
-                    <div id="test2">
-                        {sortedKeys.map((key) => (
-                            <Checkbox
-                                key={key}
-                                checked={person.apiResponse![key]}
-                                onChange={() => handleCheckBoxChange(persons.findIndex(p => p.email === person.email), key)}
-                            >
-                                {key}
-                            </Checkbox>
-                        ))}
-                        {isTestClicked && (
-                            <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
-                        )}
-                    </div>
-                </div>
-            );
+        if (Object.keys(person.apiResponse).length > 0) {
+
+            sortedKeys = []   // burde funke for å gjøre lista tom
+            console.log("ANDRE")
+            console.log(sortedKeys)
+            while (sortedKeys.length > 0) {
+                sortedKeys.pop(); // burde også funke, men det skjer ikke noe
+            }
         }
+        sortedKeys = Object.keys(person.apiResponse).sort();
+        console.log("TREDJE")
+        console.log(sortedKeys)
+        return (
+            <div id="testt">
+                {sortedKeys.map((key) => (
+                    <Checkbox
+                        key={key}
+                        checked={person.apiResponse![key]}
+                        onChange={() => handleCheckBoxChange(persons.findIndex(p => p.email === person.email), key)}
+                    >
+                        {key}
+                    </Checkbox>
+                ))}
+                {isTestClicked && (
+                    <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
+                )}
+            </div>
+        );
+
     };
 
     const handleSaveClick = async (person: PersType) => {
@@ -183,7 +187,6 @@ export default function PersonsTable() {
                 {person.fname + ' ' + person.lname}
                 <div>Email: {person.email}</div>
                 <div>Phone: {person.phone}</div>
-                <div>Styr tilgang: DROPDOWN med arkiv.noark?</div>
             </Table.DataCell>
             <Table.DataCell colSpan={4}></Table.DataCell>
             <Table.Row>
