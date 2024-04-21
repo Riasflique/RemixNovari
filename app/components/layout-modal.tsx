@@ -1,44 +1,79 @@
-import React from 'react';
-import { Modal, Button, TextField, BodyLong } from '@navikt/ds-react';
-import { persData, PersType } from '~/routes/_person';
+import React, { useState } from 'react';
+import { Modal, Button, Table, Checkbox } from '@navikt/ds-react';
+import { PersType } from '~/routes/_person';
 
 type EditPersonModalProps = {
   isOpen: boolean;
   person: PersType | null;
   onSave: (person: PersType) => void;
   onClose: () => void;
+  apiData: { [key: string]: boolean } | null;
 };
 
-const EditPersonModal: React.FC<EditPersonModalProps> = ({ isOpen, person, onSave, onClose }) => {
-  const [editingPerson, setEditingPerson] = React.useState<PersType | null>(null);
+export default function EditPersonModal({ isOpen, person, onSave, onClose, apiData }: EditPersonModalProps) {
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
-  React.useEffect(() => {
-    setEditingPerson(person);
-  }, [person]);
-
-  const handleChange = (field: keyof PersType, value: string) => {
-    if (editingPerson) {
-      setEditingPerson({ ...editingPerson, [field]: value });
+  const toggleRow = (key: string) => {
+    if (expandedRows.includes(key)) {
+      setExpandedRows(expandedRows.filter((rowKey) => rowKey !== key));
+    } else {
+      setExpandedRows([...expandedRows, key]);
     }
   };
 
   const handleSave = () => {
-    if (editingPerson) {
-      onSave(editingPerson);
-      setEditingPerson(null); // Reset editingPerson state after saving
+    if (person) {
+      onSave(person);
+    }
+    onClose();
+  };
+
+  const handleRoleChange = (role: string) => {
+    if (person) {
+      const updatedApiData = {
+        ...apiData,
+        [role]: !apiData[role]
+      };
+      const updatedPerson = { ...person, apiData: updatedApiData };
+      onSave(updatedPerson);
     }
   };
 
   return (
     <Modal open={isOpen} onClose={onClose} header={{ heading: 'Rediger' }}>
       <Modal.Body>
-        <BodyLong>
-          <TextField label="Navn" value={editingPerson?.fname || ''} onChange={(e) => handleChange('fname', e.target.value)}/>
-          <TextField label="Etternavn" value={editingPerson?.lname || ''} onChange={(e) => handleChange('lname', e.target.value)}/>
-          <TextField label="E-Post" value={editingPerson?.email || ''} onChange={(e) => handleChange('email', e.target.value)}/>
-          <TextField label="Telefon" value={editingPerson?.phone || ''} onChange={(e) => handleChange('phone', e.target.value)}/>
-          <TextField label="Roller" value={editingPerson?.roller || ''} onChange={(e) => handleChange('roller', e.target.value)}></TextField>
-        </BodyLong>
+        <Table>
+          <Table.Row>
+            <Table.HeaderCell>Rolle</Table.HeaderCell>
+          </Table.Row>
+          {apiData &&
+            Object.keys(apiData)
+              .sort()
+              .map((key) => (
+                <React.Fragment key={key}>
+                  <Table.Row>
+                    <Table.DataCell>
+                      <button className="expand-button" onClick={() => toggleRow(key)}>
+                        {}
+                      </button>
+                    </Table.DataCell>
+                  </Table.Row>
+                  {expandedRows.includes(key) && (
+                    <Table.Row>
+                      <Table.DataCell colSpan={1}>
+                        {/* Content to be displayed when row is expanded */}
+                        <Checkbox
+                          checked={apiData[key]}
+                          onChange={() => handleRoleChange(key)}
+                        >
+                          {key}
+                        </Checkbox>
+                      </Table.DataCell>
+                    </Table.Row>
+                  )}
+                </React.Fragment>
+              ))}
+        </Table>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onClose}>Avbryt</Button>
@@ -46,7 +81,4 @@ const EditPersonModal: React.FC<EditPersonModalProps> = ({ isOpen, person, onSav
       </Modal.Footer>
     </Modal>
   );
-};
-
-
-export default EditPersonModal;
+}

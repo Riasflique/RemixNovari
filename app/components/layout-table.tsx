@@ -23,8 +23,14 @@ export default function LayoutTable<T>({
     )
   );
 
+  const tableContainerStyle = {
+    margin: '0 auto',
+    width: '69%',
+    maxWidth: '1200px',
+  };
+
   return (
-    <div>
+    <div style={tableContainerStyle}>
       <form data-theme="dark" role="search">
         <Button  variant="primary-neutral" icon={<PencilIcon aria-hidden />}>Add new</Button>
         <Search
