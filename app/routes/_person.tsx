@@ -8,6 +8,8 @@ import { LoaderFunction, json } from "@remix-run/node";
 import { clear } from "console";
 import { forEach } from "node_modules/cypress/types/lodash";
 
+export let apiTest: { [key: string]: boolean; } | undefined;
+
 export type PersType = {
     blank: string;
     fname: string;
@@ -69,8 +71,8 @@ export default function PersonsTable() {
     const [isTestClicked, setIsTestClicked] = useState(false);
     const [packages, setPackages] = useState(null);
     //let apiData2: string[] | undefined;
-    let apiTest: { [key: string]: boolean; } | undefined;
-    //const [apiData2, setApiData2] = useState<string[] | undefined>
+
+    //const [apiData, setApiData] = useState<string[] | undefined>
 
     const handleTestClick = async (domain: string) => {
         try {
@@ -96,6 +98,7 @@ export default function PersonsTable() {
         try {
             const apiData2 = await MeApi.postPackage(component);
             console.log("Fetched API Data: APIDATA2", apiData2);  // Dette er pakkene/komponentene
+            apiData2?.sort()
 
             if (apiData2 && Object.keys(apiData2).length > 0) {
                 //apiData.forEach(
@@ -271,6 +274,7 @@ export default function PersonsTable() {
                 person={editingPerson}
                 onSave={saveChanges}
                 onClose={() => setIsEditing(false)}
+                apiData={apiTest}
             />
         </div>
     );
