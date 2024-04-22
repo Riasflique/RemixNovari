@@ -47,8 +47,8 @@ export default function Dashboard() {
       <VStack align={"center"}>
         <HStack gap="2">
           <div id="component"></div>
-          <Button variant="primary-neutral" onClick={showPersons}>Klienter</Button>
-          <Button variant="primary-neutral" onClick={showOrganizations}>Adapter</Button>
+          <Button variant="primary-neutral" onClick={showPersons}>Client/Adapter</Button>
+          <Button variant="primary-neutral" onClick={showOrganizations}>Organization</Button>
         </HStack>
 
       </VStack>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Table, Checkbox } from '@navikt/ds-react';
-import { PersType } from '~/routes/_person';
+import { PersType }  from '~/routes/_person';
 
 type EditPersonModalProps = {
   isOpen: boolean;
@@ -8,6 +8,7 @@ type EditPersonModalProps = {
   onSave: (person: PersType) => void;
   onClose: () => void;
   apiData: { [key: string]: boolean } | null;
+
 };
 
 export default function EditPersonModal({ isOpen, person, onSave, onClose, apiData }: EditPersonModalProps) {
@@ -40,11 +41,11 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose} header={{ heading: 'Rediger' }}>
+    <Modal open={isOpen} onClose={onClose} header={{ heading: 'Components' }}>
       <Modal.Body>
         <Table>
           <Table.Row>
-            <Table.HeaderCell>Rolle</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
           {apiData &&
             Object.keys(apiData)
@@ -52,32 +53,32 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
               .map((key) => (
                 <React.Fragment key={key}>
                   <Table.Row>
-                    <Table.DataCell>
-                      <button className="expand-button" onClick={() => toggleRow(key)}>
+                  <Table.DataCell>
+                      <Checkbox>
+                      <Button variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>
                         {key} {/* viser API dataene på dropdown knappen */}
-                      </button>
+                      </Button>
+                      </Checkbox>
                     </Table.DataCell>
                   </Table.Row>
                   {expandedRows.includes(key) && (
                     <Table.Row>
                       <Table.DataCell colSpan={1}>
                         {/* Content to be displayed when row is expanded */}
-                        <Checkbox
-                          checked={apiData[key]}
-                          onChange={() => handleRoleChange(key)}
-                        >
-                          {key} {/*Key byttes ut med API kode som skal vise underklassene i dropdown menyen (current key viser bare det vi har fra før atm) */ }
-                        </Checkbox>
+                                         
                       </Table.DataCell>
                     </Table.Row>
+                     
                   )}
                 </React.Fragment>
-              ))}
+                 
+               ))}
         </Table>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onClose}>Avbryt</Button>
-        <Button onClick={handleSave}>Lagre</Button>
+        <Button variant="danger" onClick={onClose}>Cancel</Button>
+      
+        <Button onClick={handleSave}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

@@ -24,7 +24,7 @@ export default function OrganizationTable() {
   };
 
   const columns: {label: string, key: keyof OrgType}[] = [
-    { label: 'Navn', key: 'orgName' },
+    { label: 'Name', key: 'orgName' },
     { label: 'Asset Id', key: 'AssetId' },
   ];
 

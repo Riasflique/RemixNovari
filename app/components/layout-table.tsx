@@ -35,7 +35,7 @@ export default function LayoutTable<T>({
         <Button  variant="primary-neutral" icon={<PencilIcon aria-hidden />}>Add new</Button>
         <Search
           label="Søk"
-          placeholder="Søk etter element"
+          placeholder="Search"
           variant="simple"
           htmlSize="16"
           onChange={handleSearchChange}

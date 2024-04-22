@@ -18,21 +18,22 @@ export function LayoutAppbar() {
                             <Dropdown>
                                 <Button icon={<MenuHamburgerIcon aria-hidden />} variant="tertiary" as={Dropdown.Toggle}>Menu</Button>
                                 <Dropdown.Menu>
-                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/person")}>Klienter</Dropdown.Menu.GroupedList.Item>
-                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/org")}>Adapter</Dropdown.Menu.GroupedList.Item>
+                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/person")}>Clients</Dropdown.Menu.GroupedList.Item>
+                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/org")}>Adapters</Dropdown.Menu.GroupedList.Item>
+                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/org")}>Organization</Dropdown.Menu.GroupedList.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Hide>
                         <Hide below="md" asChild>
                             <Button icon={<PersonIcon aria-hidden />} variant="tertiary">
                                 <BodyShort weight="semibold" truncate className="max-w-[10vw]">
-                                    Din bruker
+                                    Elias Kristensen
                                 </BodyShort>
                             </Button>
                         </Hide>
                         <Hide below="md" asChild>
                             <Button icon={<LeaveIcon aria-hidden />} variant="tertiary">
-                                Logg ut
+                                Log out
                             </Button>
                         </Hide>
                     </HStack>

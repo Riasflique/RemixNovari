@@ -96,8 +96,7 @@ const persData: PersType[] = [
         <Table.DataCell colSpan={4}></Table.DataCell>
         <Table.Row>
           <Table.DataCell colSpan={5}>
-            <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => editPopupWindow(person)}></Button>
-            <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => handleTestClick()}>Test</Button>
+            <Button size="xsmall" icon={<PencilIcon aria-hidden />} onClick={() => handleTestClick() && editPopupWindow(person)}></Button>
           </Table.DataCell>
         </Table.Row>
       </Table.ExpandableRow>
@@ -124,8 +123,7 @@ const persData: PersType[] = [
   
     const columns: { label: string; key: keyof PersType }[] = [
       { label: '', key: 'blank' }, //empty column to move header 1 step away!
-      { label: 'Navn', key: 'fname' },
-      { label: 'Roller', key: 'roller' }
+      { label: 'Name', key: 'fname' }
     ];
   
     const handleCheckBoxChange = (personIndex: number, key: string) => {
@@ -142,7 +140,6 @@ const persData: PersType[] = [
   
     return (
       <div>
-        <h1>Person</h1>
         <LayoutTable
           data={persons}
           searchItem={searchItem}
