@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Table, Checkbox } from '@navikt/ds-react';
-import { PersType } from '~/routes/_person';
+import { PersType } from '~/routes/person';
 import MeApi from "~/api/me-api";
 
 type EditPersonModalProps = {

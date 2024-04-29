@@ -4,8 +4,9 @@ import { PersonGroupIcon, PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
 import EditPersonModal from "~/components/layout-modal";
 import MeApi from "~/api/me-api";
-import { LoaderFunction, json } from "@remix-run/node";
+import { LinksFunction, LoaderFunction, MetaFunction, json } from "@remix-run/node";
 import { findKey } from "node_modules/cypress/types/lodash";
+
 
 export type PersType = {
     blank: string;

@@ -2,8 +2,8 @@ import type { LinksFunction, LoaderFunction, LoaderFunctionArgs, MetaFunction } 
 import React, { useState } from "react";
 import { Page, TextField, Button, VStack, HStack } from "@navikt/ds-react";
 import navStyles from "@navikt/ds-css/dist/index.css";
-import OrganizationTable from "./_org";
-import PersonsTable from "./_person";
+import OrganizationTable from "./org";
+import PersonsTable from "./person";
 import { Link, json } from "@remix-run/react";
 import MeApi from "~/api/me-api";
 import { useLoaderData } from "@remix-run/react";
@@ -41,19 +41,4 @@ export default function Dashboard() {
     setShowOrganizationsTable(true);
   };
 
-
-  return (
-    <div>
-      <VStack align={"center"}>
-        <HStack gap="2">
-          <div id="component"></div>
-          <Button variant="primary-neutral" onClick={showPersons}>Client/Adapter</Button>
-          <Button variant="primary-neutral" onClick={showOrganizations}>Organization</Button>
-        </HStack>
-
-      </VStack>
-      {showPersonsTable && <PersonsTable />}
-      {showOrganizationsTable && <OrganizationTable />}
-    </div>
-  );
 }

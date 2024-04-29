@@ -20,6 +20,7 @@ import {json} from "@remix-run/node";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }, { rel: "stylesheet", href: navStyles }] : []),
+ { rel: "stylesheet", href: navStyles }
 ];
 /*
 export async function loader(){

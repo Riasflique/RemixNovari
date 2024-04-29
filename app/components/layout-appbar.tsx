@@ -1,10 +1,10 @@
 import React from "react";
 import { BodyShort, Button, Dropdown, Hide, HStack } from "@navikt/ds-react";
 import { LeaveIcon, PersonIcon, MenuHamburgerIcon } from '@navikt/aksel-icons';
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "@remix-run/react";
 
 export function LayoutAppbar() {
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
 
     return (
         <>
@@ -19,7 +19,7 @@ export function LayoutAppbar() {
                                 <Button icon={<MenuHamburgerIcon aria-hidden />} variant="tertiary" as={Dropdown.Toggle}>Menu</Button>
                                 <Dropdown.Menu>
                                     <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/person")}>Clients</Dropdown.Menu.GroupedList.Item>
-                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/org")}>Adapters</Dropdown.Menu.GroupedList.Item>
+                                    <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/person")}>Adapters</Dropdown.Menu.GroupedList.Item>
                                     <Dropdown.Menu.GroupedList.Item onClick={() => navigate("/org")}>Organization</Dropdown.Menu.GroupedList.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
