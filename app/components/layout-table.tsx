@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Table, Search } from "@navikt/ds-react";
 import { PencilIcon } from "@navikt/aksel-icons";
+import AddnewLayoutTable from "./layout-addnew";
+import { PersType, persData } from "~/routes/person";
 
 interface TableProps<T> {
   data: T[];
@@ -10,18 +12,36 @@ interface TableProps<T> {
   renderRow: (item: T, index: number) => React.ReactNode;
 }
 
-export default function LayoutTable<T>({
+export default function LayoutTable<T extends Record<string, any>>({
   data,
   searchItem,
   handleSearchChange,
   columns,
   renderRow,
 }: TableProps<T>) {
-  const filteredData = data.filter((item) =>
+
+  const [persons, setPersons] = useState<PersType[]>(persData);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleAddNewModal = () => {
+    setIsAddingNew(!isAddingNew)
+  };
+  const toggleOffNewModal = () => {
+    setIsModalOpen(true);
+  }
+
+  const handleSaveNewPerson = (newPerson: PersType) => {
+    setPersons([...persons, newPerson]);
+    toggleAddNewModal();
+  };
+
+  console.log("Received data in LayoutTable:", data); 
+  const filteredData = Array.isArray(data) ? data.filter((item) =>
     Object.values(item).some((value) =>
       String(value).toLowerCase().includes(searchItem.toLowerCase())
     )
-  );
+  ) : [];
 
   const tableContainerStyle = {
     margin: '0 auto',
@@ -32,7 +52,7 @@ export default function LayoutTable<T>({
   return (
     <div style={tableContainerStyle}>
       <form data-theme="dark" role="search">
-        <Button  variant="primary-neutral" icon={<PencilIcon aria-hidden />}>Add new</Button>
+        <Button variant="primary-neutral" icon={<PencilIcon aria-hidden />} onClick={toggleAddNewModal} type="button">Add new</Button>
         <Search
           label="Søk"
           placeholder="Search"
@@ -46,7 +66,7 @@ export default function LayoutTable<T>({
         <Table.Header>
           <Table.Row>
             {columns.map((column) => (
-              <Table.HeaderCell key={column.key} scope="col">
+              <Table.HeaderCell key={String(column.key)} scope="col">
                 {column.label}
               </Table.HeaderCell>
             ))}
@@ -54,6 +74,11 @@ export default function LayoutTable<T>({
         </Table.Header>
         <Table.Body>{filteredData.map(renderRow)}</Table.Body>
       </Table>
+      <AddnewLayoutTable
+        isOpen={isAddingNew}
+        onClose={toggleOffNewModal}
+        onSave={handleSaveNewPerson}
+      />
     </div>
   );
 }

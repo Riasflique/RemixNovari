@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { Button, Table } from "@navikt/ds-react";
 import { PersonIcon, PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
+import { LoaderFunction, json } from "@remix-run/node";
+import path from 'path';
+import fs from 'fs/promises';
+import { useLoaderData } from "@remix-run/react";
 
 export type OrgType = {
   orgName: string;
@@ -16,9 +20,21 @@ const orgData: OrgType[] = [
   { orgName: "Jedi Archives", AssetId: "jedi.order" },
 ];
 
+
+export const loader: LoaderFunction = async () => {
+  const filePath = path.join(process.cwd(), 'app', 'data', 'orgData.json');
+  const data = await fs.readFile(filePath, 'utf8');
+  const jsonData = JSON.parse(data);
+  console.log("Parsed data:", jsonData);  // This should log the array of objects
+  return json(jsonData);
+};
+
+
 export default function OrganizationTable() {
-  const [searchItem, setSearchItem] = useState('');
-  
+  const orgData = useLoaderData<OrgType[]>();
+  console.log("orgData from loader:", orgData)
+  const [searchItem, setSearchItem] = React.useState('');
+
   const handleSearchChange = (value: string) => {
     setSearchItem(value);
   };
@@ -29,7 +45,7 @@ export default function OrganizationTable() {
   ];
 
   const renderRow = (org: OrgType, index: number) => (
-    <Table.Row key={index} content="">
+    <Table.Row key={index}>
       <Table.DataCell scope="row">{org.orgName}</Table.DataCell>
       <Table.DataCell>{org.AssetId}</Table.DataCell>
       <Button size="xsmall" icon={<PencilIcon title="Rediger"/>} />

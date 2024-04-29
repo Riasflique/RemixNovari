@@ -1,0 +1,7 @@
+[
+  { "orgName": "Alliance to Restore the Republic", "AssetId": "Rebel.Alliance" },
+  { "orgName": "Bespin Gas Mining", "AssetId": "Cloud.city" },
+  { "orgName": "Corellia Shipyards", "AssetId": "Corellia.shipyards" },
+  { "orgName": "Imperial Forces", "AssetId": "Galactic.empire" },
+  { "orgName": "Jedi Archives", "AssetId": "jedi.order" }
+]

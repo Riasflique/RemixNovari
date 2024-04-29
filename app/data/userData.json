@@ -1,0 +1,29 @@
+[
+    {
+        "blank": "","fname": "Luke","lname": "Skywalker","email": "luke.skywalker@rebelalliance.com","phone": "99440055","roller": "test"
+    },
+    {
+        "blank": "",
+        "fname": "Anakin",
+        "lname": "Skywalker",
+        "email": "Anakin.skywalker@galacticempire.com",
+        "phone": "99550066",
+        "roller": "test"
+    },
+    {
+        "blank": "",
+        "fname": "Thomas",
+        "lname": "Kirkeng",
+        "email": "thomas.kirkeng@darkside.com",
+        "phone": "40493581",
+        "roller": "test"
+    },
+    {
+        "blank": "",
+        "fname": "Andris",
+        "lname": "Hoiseth",
+        "email": "andris.hoiseth@chebacca.com",
+        "phone": "33994455",
+        "roller": "test"
+    }
+]
