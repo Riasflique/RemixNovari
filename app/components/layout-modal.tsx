@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Table, Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { PersType } from '~/routes/person';
 import MeApi from "~/api/me-api";
+import { ChevronDownIcon } from '@navikt/aksel-icons';
 
 type EditPersonModalProps = {
   isOpen: boolean;
@@ -109,7 +110,7 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
                         checked={packageBoxCheck[key]}
                         onChange={handlePackageCheck(key)}
                       >
-                        <Button variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>
+                        <Button icon={<ChevronDownIcon aria-hidden />} variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>
                           {key.replace("no.fint.model.", "")}
                         </Button>
                       </Checkbox>
