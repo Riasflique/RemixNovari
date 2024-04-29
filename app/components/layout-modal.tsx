@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Button, Table, Checkbox } from '@navikt/ds-react';
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Table, Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { PersType } from '~/routes/person';
 import MeApi from "~/api/me-api";
 
@@ -13,26 +13,43 @@ type EditPersonModalProps = {
 };
 
 export default function EditPersonModal({ isOpen, person, onSave, onClose, apiData }: EditPersonModalProps) {
-  const [expandedRows, setExpandedRows] = useState<string[]>([]);
-  const [resources, setResources] = useState<string[]>([])
+  const [expandedRows, setExpandedRows] = useState<string[]>([])
+  const [resources, setResources] = useState<Record<string, string[]>>({})
+  const [packageBoxCheck, setPackageBoxCheck] = useState<Record<string, boolean>>({})
+  //const [resourcesBoxCheck, setResourcesBoxCheck] = useState<any[]>([])
+  const [allChecked, setAllChecked] = useState<boolean>(false);
+  //const [test, setTest] = useState<Record<string, any[]>>({})
+  const [checkedState, setCheckedState] = useState<Record<string, boolean[]>>({});
 
-  const toggleRow = async (key: string) => {
-    if (expandedRows.includes(key)) { // lista lukker seg
-      setExpandedRows(expandedRows.filter((rowKey) => rowKey !== key));
-    } else { // lista expander
-      const nyKey = key.replace("no.fint.model.", "")
-      try {
-        const apiTest = await MeApi.postComponent(nyKey)
-        if (apiTest) {
-          const resourceNames = Object.keys(apiTest).sort()
-          setResources(resourceNames)
-        } else {
-          console.log("else nei")
+  useEffect(() => {
+    if (apiData) {
+      const fetchData = async () => {
+        try {
+          const resourceLists = {};
+          const packageChecks = {};
+          for (const key in apiData) {
+            const nyKey = key.replace("no.fint.model.", "");
+            const apiTest = await MeApi.postComponent(nyKey);
+            if (apiTest) {
+              const resourceNames = Object.keys(apiTest).sort();
+              resourceLists[key] = resourceNames;
+              packageChecks[key] = false;
+            }
+          }
+          setResources(resourceLists);
+          setPackageBoxCheck(packageChecks);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Ressurs-fetchen feilet", error);
-      }
+      };
+      fetchData();
+    }
+  }, [apiData]);
 
+  const toggleRow = (key: string) => {
+    if (expandedRows.includes(key)) {
+      setExpandedRows(expandedRows.filter((rowKey) => rowKey !== key));
+    } else {
       setExpandedRows([...expandedRows, key]);
     }
   };
@@ -44,14 +61,33 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
     onClose();
   };
 
-  const handleRoleChange = (role: string) => {
-    if (person) {
-      const updatedApiData = {
-        ...apiData,
-        [role]: !apiData[role]
-      };
-      const updatedPerson = { ...person, apiData: updatedApiData };
-      onSave(updatedPerson);
+  const handlePackageCheck = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setPackageBoxCheck(prevChecks => ({ ...prevChecks, [key]: isChecked }));
+    handleCheckAll();
+  };
+
+  const handleResourceCheck = (key: string, index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    console.log(isChecked, " på index ", index)
+  };
+
+  const handleCheckBoxChange = (key: string, resourceIndex: number) => {
+    setCheckedState((prevState) => ({
+      ...prevState,
+      [key]: prevState[key].map((checked, index) =>
+        index === resourceIndex ? !checked : checked
+      ),
+    }));
+    console.log("endret ", key, " - index ", resourceIndex);
+  };
+
+  const handleCheckAll = () => {
+    if (!packageBoxCheck) {
+      setAllChecked(true)
+    }
+    else {
+      setAllChecked(false)
     }
   };
 
@@ -65,41 +101,48 @@ export default function EditPersonModal({ isOpen, person, onSave, onClose, apiDa
           {apiData &&
             Object.keys(apiData)
               .sort()
-              .map((key) => (
+              .map((key, index) => (
                 <React.Fragment key={key}>
                   <Table.Row>
                     <Table.DataCell>
-                      <Checkbox>
+                      <Checkbox
+                        checked={packageBoxCheck[key]}
+                        onChange={handlePackageCheck(key)}
+                      >
                         <Button variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>
-                          {key.replace("no.fint.model.", "")} {/* viser API dataene på dropdown knappen */}
+                          {key.replace("no.fint.model.", "")}
                         </Button>
                       </Checkbox>
                     </Table.DataCell>
                   </Table.Row>
-                  {expandedRows.includes(key) && (
+                  {expandedRows.includes(key) && resources[key] && (
                     <Table.Row>
                       <Table.DataCell colSpan={1}>
-                        {resources.map((key) => (
-                          <Checkbox
-                            key={key}
-
-                            onChange={() => console.log("CHANGE")}
-                          >
-                            {key}
-                          </Checkbox>
-                        ))}
+                        <CheckboxGroup
+                          legend="Resources"
+                          hideLegend={true}
+                          size='small'
+                        >
+                          {resources[key].map((resourceName, resourceIndex) => (
+                            <Checkbox
+                              key={resourceName}
+                              checked={checkedState[key] ? checkedState[key][resourceIndex] || false : false}
+                              onChange={handleResourceCheck(key, resourceIndex)}
+                              value={resourceIndex}
+                            >
+                              {resourceName}
+                            </Checkbox>
+                          ))}
+                        </CheckboxGroup>
                       </Table.DataCell>
                     </Table.Row>
-
                   )}
                 </React.Fragment>
-
               ))}
         </Table>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="danger" onClick={onClose}>Cancel</Button>
-
         <Button onClick={handleSave}>Save</Button>
       </Modal.Footer>
     </Modal>
