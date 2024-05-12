@@ -1,145 +1,118 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Table, Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { PersType } from '~/routes/person';
 import MeApi from "~/api/me-api";
-import { ChevronDownIcon } from '@navikt/aksel-icons';
 
 type EditPersonModalProps = {
   isOpen: boolean;
-  person: PersType | null;
+  persons: PersType | null;
   onSave: (person: PersType) => void;
   onClose: () => void;
   apiData: { [key: string]: boolean } | null;
-
 };
 
-export default function EditPersonModal({ isOpen, person, onSave, onClose, apiData }: EditPersonModalProps) {
-  const [expandedRows, setExpandedRows] = useState<string[]>([])
-  const [resources, setResources] = useState<Record<string, string[]>>({})
-  const [packageBoxCheck, setPackageBoxCheck] = useState<Record<string, boolean>>({})
-  //const [resourcesBoxCheck, setResourcesBoxCheck] = useState<any[]>([])
-  const [allChecked, setAllChecked] = useState<boolean>(false);
-  //const [test, setTest] = useState<Record<string, any[]>>({})
-  const [checkedState, setCheckedState] = useState<Record<string, boolean[]>>({});
+export default function EditPersonModal({ isOpen, persons, onSave, onClose, apiData }: EditPersonModalProps) {
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [checkboxState, setCheckboxState] = useState<{ [key: string]: boolean }>({});
+  const [resourcesByMaster, setResourcesByMaster] = useState<{ [key: string]: string[] }>({});
 
-  useEffect(() => {
-    if (apiData) {
-      const fetchData = async () => {
-        try {
-          const resourceLists = {};
-          const packageChecks = {};
-          for (const key in apiData) {
-            const nyKey = key.replace("no.fint.model.", "");
-            const apiTest = await MeApi.postComponent(nyKey);
-            if (apiTest) {
-              const resourceNames = Object.keys(apiTest).sort();
-              resourceLists[key] = resourceNames;
-              packageChecks[key] = false;
-            }
-          }
-          setResources(resourceLists);
-          setPackageBoxCheck(packageChecks);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-      fetchData();
+
+  const handleMasterCheckboxChange = (key: string, isChecked: boolean) => {
+  
+    const newStates = {...checkboxState, [key]: isChecked};
+    
+    if (resourcesByMaster[key]) {
+      resourcesByMaster[key].forEach(resource => {
+        newStates[`${key}.${resource}`] = isChecked;
+      });
     }
-  }, [apiData]);
+    setCheckboxState(newStates);
+  };
 
-  const toggleRow = (key: string) => {
+
+const handleCheckboxChanges = (masterKey: string, resourceKey: string, isChecked: boolean) => {
+  const newStates = { ...checkboxState, [`${masterKey}.${resourceKey}`]: isChecked };
+
+  // Update the master checkbox based on all its subordinates
+  if (masterKey === resourceKey && resourcesByMaster[masterKey]) {
+    // Direct master checkbox toggle affects all subordinates
+    resourcesByMaster[masterKey].forEach(resource => {
+      newStates[`${masterKey}.${resource}`] = isChecked;
+    });
+  } else if (resourcesByMaster[masterKey]) {
+    // Check if all subordinates are now checked to decide on master checkbox state
+    const allChecked = resourcesByMaster[masterKey].every(resource => newStates[`${masterKey}.${resource}`]);
+    newStates[masterKey] = allChecked;
+  }
+
+  setCheckboxState(newStates);
+};
+
+  const toggleRow = async (key: string) => {
     if (expandedRows.includes(key)) {
-      setExpandedRows(expandedRows.filter((rowKey) => rowKey !== key));
+      setExpandedRows(prevRows => prevRows.filter(row => row !== key));
     } else {
-      setExpandedRows([...expandedRows, key]);
+      const formattedKey = key.replace("no.fint.model.", "");
+      try {
+        const apiResponse = await MeApi.postComponent(formattedKey);
+        if (apiResponse && Object.keys(apiResponse).length > 0) {
+          const resourceNames = Object.keys(apiResponse).sort();
+          setResourcesByMaster(prev => ({ ...prev, [key]: resourceNames }));
+          setExpandedRows(prevRows => [...prevRows, key]);
+        }
+      } catch (error) {
+        console.error("Resource fetch failed", error);
+      }
     }
   };
 
   const handleSave = () => {
-    if (person) {
-      onSave(person);
+    if (persons) {
+        onSave(persons);
     }
-    onClose();
-  };
-
-  const handlePackageCheck = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked;
-    setPackageBoxCheck(prevChecks => ({ ...prevChecks, [key]: isChecked }));
-    handleCheckAll();
-  };
-
-  const handleResourceCheck = (key: string, index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked;
-    console.log(isChecked, " på index ", index)
-  };
-
-  const handleCheckBoxChange = (key: string, resourceIndex: number) => {
-    setCheckedState((prevState) => ({
-      ...prevState,
-      [key]: prevState[key].map((checked, index) =>
-        index === resourceIndex ? !checked : checked
-      ),
-    }));
-    console.log("endret ", key, " - index ", resourceIndex);
-  };
-
-  const handleCheckAll = () => {
-    if (!packageBoxCheck) {
-      setAllChecked(true)
-    }
-    else {
-      setAllChecked(false)
-    }
+    onClose(); 
   };
 
   return (
     <Modal open={isOpen} onClose={onClose} header={{ heading: 'Components' }}>
       <Modal.Body>
         <Table>
-          <Table.Row>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-          {apiData &&
-            Object.keys(apiData)
-              .sort()
-              .map((key, index) => (
-                <React.Fragment key={key}>
-                  <Table.Row>
-                    <Table.DataCell>
-                      <Checkbox
-                        checked={packageBoxCheck[key]}
-                        onChange={handlePackageCheck(key)}
-                      >
-                        <Button icon={<ChevronDownIcon aria-hidden />} variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>
-                          {key.replace("no.fint.model.", "")}
-                        </Button>
-                      </Checkbox>
-                    </Table.DataCell>
-                  </Table.Row>
-                  {expandedRows.includes(key) && resources[key] && (
-                    <Table.Row>
-                      <Table.DataCell colSpan={1}>
-                        <CheckboxGroup
+          {apiData && Object.keys(apiData).sort().map((key) => (
+            <React.Fragment key={key}>
+              <Table.Row>
+                <Table.DataCell>
+                  <Checkbox
+                    checked={checkboxState[key] || false}
+                    onChange={e => handleMasterCheckboxChange(key, e.target.checked)} // Assuming the key is both the masterKey and resourceKey in this context
+                  >
+                  <Button variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>{key.replace("no.fint.model.", "")}</Button>
+                  </Checkbox>
+                </Table.DataCell>
+              </Table.Row>
+              {expandedRows.includes(key) && resourcesByMaster[key] && (
+                <Table.Row>
+                  <Table.DataCell colSpan={1}>
+                  <CheckboxGroup
                           legend="Resources"
                           hideLegend={true}
                           size='small'
                         >
-                          {resources[key].map((resourceName, resourceIndex) => (
-                            <Checkbox
-                              key={resourceName}
-                              checked={checkedState[key] ? checkedState[key][resourceIndex] || false : false}
-                              onChange={handleResourceCheck(key, resourceIndex)}
-                              value={resourceIndex}
-                            >
-                              {resourceName}
-                            </Checkbox>
-                          ))}
-                        </CheckboxGroup>
-                      </Table.DataCell>
-                    </Table.Row>
-                  )}
-                </React.Fragment>
-              ))}
+                    {resourcesByMaster[key].map((resource) => (
+                      <Checkbox
+                        key={`${key}.${resource}`}
+                        checked={checkboxState[`${key}.${resource}`] || false}
+                        onChange={e => handleCheckboxChanges(key, resource, e.target.checked)}
+                      >
+                        {resource}
+                      </Checkbox>
+                  
+                    ))}
+                    </CheckboxGroup>
+                  </Table.DataCell>
+                </Table.Row>
+              )}
+            </React.Fragment>
+          ))}
         </Table>
       </Modal.Body>
       <Modal.Footer>

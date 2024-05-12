@@ -1,6 +1,6 @@
 import type { LinksFunction, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import React, { useState } from "react";
-import { Page, TextField, Button, VStack, HStack } from "@navikt/ds-react";
+import { Page, TextField, Button, VStack, HStack, Heading } from "@navikt/ds-react";
 import navStyles from "@navikt/ds-css/dist/index.css";
 import OrganizationTable from "./org";
 import PersonsTable from "./person";
@@ -26,19 +26,16 @@ export const loader: LoaderFunction = ({ request }) => {
   return json(MeApi.fetchDisplayName());
 }
 
+
 export default function Dashboard() {
-  const [showPersonsTable, setShowPersonsTable] = useState(false);
-  const [showOrganizationsTable, setShowOrganizationsTable] = useState(false);
-  const loaderData = useLoaderData();
-
-  const showPersons = () => {
-    setShowPersonsTable(true);
-    setShowOrganizationsTable(false);
+  const indexStyle = {
+    margin: '0 auto',
+    width: '100%',
+    maxWidth: '1200px',
   };
-
-  const showOrganizations = () => {
-    setShowPersonsTable(false);
-    setShowOrganizationsTable(true);
-  };
-
+  return (
+    <div style={indexStyle}>
+      <Heading size="xlarge" style={indexStyle}>Velkommen Elias Kristensen</Heading>
+    </div>
+  );
 }

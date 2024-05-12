@@ -6,7 +6,9 @@ import EditPersonModal from "~/components/layout-modal";
 import MeApi from "~/api/me-api";
 import { LinksFunction, LoaderFunction, MetaFunction, json } from "@remix-run/node";
 import { findKey } from "node_modules/cypress/types/lodash";
-
+import fs from 'fs/promises';
+import path from 'path';
+import { useLoaderData } from "@remix-run/react"
 
 export type PersType = {
     blank: string;
@@ -14,7 +16,6 @@ export type PersType = {
     lname: string;
     email: string;
     phone: string;
-    roller: string;
     apiResponse?: { [key: string]: boolean };
 };
 
@@ -24,41 +25,46 @@ const persData: PersType[] = [
         fname: 'Luke',
         lname: 'Skywalker',
         email: 'luke.skywalker@rebelalliance.com',
-        phone: '99440055',
-        roller: 'test'
+        phone: '99440055'
     },
     {
         blank: '',
         fname: 'Anakin',
         lname: 'Skywalker',
         email: 'Anakin.skywalker@galacticempire.com',
-        phone: '99550066',
-        roller: 'test'
+        phone: '99550066'
     },
     {
         blank: '',
         fname: 'Thomas',
         lname: 'Kirkeng',
         email: 'thomas.kirkeng@darkside.com',
-        phone: '40493581',
-        roller: 'test'
+        phone: '40493581'
     },
     {
         blank: '',
         fname: 'Andris',
         lname: 'Hoiseth',
         email: 'andris.hoiseth@chebacca.com',
-        phone: '33994455',
-        roller: 'test'
+        phone: '33994455'
     }
 ];
 
+
 export default function PersonsTable() {
+    
     const [persons, setPersons] = useState<PersType[]>(persData);
+    //const persons = useLoaderData<PersType[]>();
     const [searchItem, setSearchItem] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
     const [apiData, setApiData] = useState<{ [key: string]: boolean } | null>(null);
+
+    if (!persons || persons.length === 0) {
+        console.log("No persons data loaded");
+        return <div>No data available</div>;
+    }
+
 
     const handleTestClick = async () => {
         try {
@@ -167,15 +173,14 @@ export default function PersonsTable() {
 
         return (
             <div>
-
                 <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
             </div>
         );
     };
 
-    const handleSaveClick = async (person: PersType) => {
+    const handleSaveClick = async (persons: PersType) => {
         // Handle save action for the person here
-        console.log("Saving changes for:", person);
+        console.log("Saving changes for:", persons);
     };
 
     const columns: { label: string; key: keyof PersType }[] = [
@@ -192,7 +197,7 @@ export default function PersonsTable() {
             [key]: !(person.apiResponse && person.apiResponse[key])
         };
 
-        setPersons(updatedPersons);
+        //setPersons(updatedPersons);
     };
 
     return (
@@ -203,11 +208,12 @@ export default function PersonsTable() {
                 handleSearchChange={handleSearchChange}
                 columns={columns}
                 renderRow={renderRow}
+                tableType="Clients"
             />
 
             <EditPersonModal
                 isOpen={isEditing}
-                person={editingPerson}
+                persons={editingPerson}
                 onSave={saveChanges}
                 onClose={() => setIsEditing(false)}
                 apiData={apiData}
