@@ -82,6 +82,7 @@ const handleCheckboxChanges = (masterKey: string, resourceKey: string, isChecked
               <Table.Row>
                 <Table.DataCell>
                   <Checkbox
+                    id={`checkbox-${key}`} // Added ID to checkbox
                     checked={checkboxState[key] || false}
                     onChange={e => handleMasterCheckboxChange(key, e.target.checked)} // Assuming the key is both the masterKey and resourceKey in this context
                   >
@@ -99,6 +100,7 @@ const handleCheckboxChanges = (masterKey: string, resourceKey: string, isChecked
                         >
                     {resourcesByMaster[key].map((resource) => (
                       <Checkbox
+                        id={`checkbox-${key}-${resource}`} // Added ID to checkbox
                         key={`${key}.${resource}`}
                         checked={checkboxState[`${key}.${resource}`] || false}
                         onChange={e => handleCheckboxChanges(key, resource, e.target.checked)}
@@ -116,8 +118,8 @@ const handleCheckboxChanges = (masterKey: string, resourceKey: string, isChecked
         </Table>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave}>Save</Button>
+        <Button id="cancel-button" variant="danger" onClick={onClose}>Cancel</Button>
+        <Button id="save-button" onClick={handleSave}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation } from '@remix-run/react';
-import { Tabs, Heading, TextField, Button , VStack} from "@navikt/ds-react";
+import { Tabs, Heading, TextField, Button , Select} from "@navikt/ds-react";
 import { PersonGroupIcon, ComponentIcon, PencilIcon, Buildings3Icon} from '@navikt/aksel-icons';
-import { ATextDefault } from '@navikt/ds-tokens/dist/tokens';
+import { PersType, persData } from './person';
 
 export default function OrgView() {
   const location = useLocation();
@@ -12,6 +12,7 @@ export default function OrgView() {
   const [orgNumber, setOrgNumber] = useState(org.orgNumber);
   const [editedOrgName, setEditedOrgName] = useState(org.orgName); 
   const [editedOrgNumber, setEditedOrgNumber] = useState(org.orgNumber); 
+  const [editedContact, setEditedContact] = useState("")
   const [contactsCount, setContactsCount] = useState(0);
   const [componentCount, setcomponentCount] = useState(0);
 
@@ -25,6 +26,14 @@ export default function OrgView() {
 
   const handleOrgNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEditedOrgNumber(event.target.value);
+  };
+
+  const handleContactChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    
+  };
+  
+  const handleUpdateContact = () => {
+    setEditedContact(editedContact);
   };
 
   const handleSave = () => {
@@ -53,8 +62,9 @@ export default function OrgView() {
         <h3>{orgName}</h3>
         <p>Org number: {orgNumber}</p>
         <p>Primary Asset Id: {org.AssetId}</p>
+        <p>Legal Contact: {editedContact}</p>
         <div className='Tabs'>
-          <Tabs defaultValue="contacts" onChange={handleTabChange}>
+          <Tabs defaultValue="editOrg" onChange={handleTabChange}>
             <Tabs.List>
              <Tabs.Tab icon={<PersonGroupIcon aria-hidden />} value="contacts" label={`Contacts (${contactsCount})`} />
               <Tabs.Tab icon={<ComponentIcon aria-hidden />} value="components" label={`Components (${contactsCount})`} />
@@ -69,8 +79,18 @@ export default function OrgView() {
             <Tabs.Panel value="editOrg" className="h-24 w-full bg-gray-50 p-4">
               {<TextField label="Vist navn" value={editedOrgName} onChange={handleOrgNameChange}></TextField>}
               {<TextField label="Organisasjonsnummer" value={editedOrgNumber} onChange={handleOrgNumberChange}></TextField>}
-              {<Button variant="primary" size="medium" onClick={handleSave}>Save</Button>}
+              {<Button id="save-org" variant="primary" size="medium" onClick={handleSave}>Save</Button>}
+              <Select label="Oppdater juridisk kontakt" value={editedContact} onChange={handleContactChange}>
+                <option label=''></option>
+               {persData.map((person, index) => (
+               <option key={index} value={`${person.fname} ${person.lname}`}>
+                {`${person.fname} ${person.lname}`}
+              </option>
+              ))}
+              </Select>
+              <Button size='small'onClick={handleUpdateContact}>Rediger</Button>
               {<Button variant="danger" size='small'>slett organisasjon</Button>} 
+              
             </Tabs.Panel>
           </Tabs>
         </div>
