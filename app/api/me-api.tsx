@@ -1,6 +1,7 @@
 import { method } from "node_modules/cypress/types/bluebird";
 import { SetStateAction, useState } from "react";
-import { json } from "@remix-run/node";
+import { LoaderFunction, json } from "@remix-run/node";
+import { PersType } from "~/routes/person";
 
 // const APIURL = "http://localhost:8080/resource"
 // const API_URL = process.env.APIURL;
@@ -152,8 +153,71 @@ class MeApi {
         }
         return list;
     }
+    /* skal hente data fra database 
+    static async  getDataFromAPI() {
+        const url = 'http://localhost:8080/api/getUsers';  
+
+        
+    
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cors': ''
+                },
+                method: 'POST',
+                mode: 'no-cors',
+                //body: JSON.stringify({ c })
+            });           // Make the HTTP request
+            console.log('Raw Response:', response);  // Check the full response object
+
+            const data = await response.json();
+            console.log('Parsed Data:', data);      // Check the parsed JSON data
+
+            if (Array.isArray(data)) {
+                return data;
+            } else {
+                return [data];
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
+        }
+            }*/
+
+             /* loader: LoaderFunction = async () => {
+                const response = await fetch("http://localhost:8080/api/getUsers");
+                const persons = await response.json();
+                return json(persons);
+              };*/
 
 
-}
+
+              static async getDataFromAPI() {
+                try {
+                    
+                    const response = await fetch("http://localhost:8080/api/getUsers", {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Cors': ''
+                        },
+                        method: 'GET',
+                        mode: 'no-cors',
+                        //body: JSON.stringify({ p })
+                    });
+
+                    const rawData = await response.text();
+                    
+                    
+                    //const packageData = await response.json();
+                    const packageData = JSON.parse(rawData);
+                    return rawData;
+                } catch (error) {
+                    console.error("PostPackage error: ", error);
+                    throw error;
+                }
+              }
+        }
+
 
 export default MeApi;

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Button, Table, Search, Heading } from "@navikt/ds-react";
 import { PencilIcon } from "@navikt/aksel-icons";
 import AddnewLayoutTable from "./layout-addnew";
-import { PersType, persData } from "~/routes/person";
+import { PersType } from "~/routes/person";
+import { getPersData } from '~/routes/person';
 
 interface TableProps<T> {
   data: T[];
@@ -12,6 +13,12 @@ interface TableProps<T> {
   renderRow: (item: T, index: number) => React.ReactNode;
   tableType: "Clients" | "Organizations";
 }
+async function useData() {
+  const persData = await getPersData();
+  console.log(persData);
+}
+useData();
+
 
 export default function LayoutTable<T extends Record<string, any>>({
   data,

@@ -9,17 +9,80 @@ import { findKey } from "node_modules/cypress/types/lodash";
 import fs from 'fs/promises';
 import path from 'path';
 import { useLoaderData } from "@remix-run/react"
+//import fetchdataFromApi from "~/api/me-api";
 
 export type PersType = {
-    blank: string;
+    
     fname: string;
     lname: string;
-    email: string;
-    phone: string;
-    apiResponse?: { [key: string]: boolean };
+    id: number;
+    access: string;
+    phone: number;
+    mail: string;
+    //apiResponse?: { [key: string]: boolean };
 };
+//let personListe: JSON[] = ;
 
-const persData: PersType[] = [
+/*async function getData() {
+    try{
+    const pers: string = await MeApi.getDataFromAPI()
+    return pers;
+    }catch(error){
+        console.log("GETDATA ERROR: " + error);
+    }
+    
+}*/
+
+async function getData(): Promise<PersType[]> {
+    try {
+        const json: string = await MeApi.getDataFromAPI();
+        console.log("GD LOG: " + json);
+        
+        return [JSON.parse(json)];  
+    } catch (error) {
+        console.log("GETDATA ERROR: " + error);
+        return [];  // Return an empty array in case of an error
+    }
+}
+//console.log("RAW DATA: " + JSON.stringify(getData(), null, 2));
+getData()
+    .then(rawData => console.log("RAW DATA: " + JSON.stringify(rawData, null, 2)))
+    .catch(error => console.error("Error logging data: " + error));
+
+    
+//const  persData: PersType[] = await getData();
+async function handleData(): Promise<PersType[]> {
+    try {
+        console.log("Test 123");
+        
+        const apiData: PersType[] = await getData();
+        console.log("Hva kommer ut: " + apiData);
+        return apiData;
+    } catch (error) {
+        console.error("Error fetching data: " + error);
+        return [];  // Return an empty array on error, ensuring return type is consistent
+    }
+}
+
+//const persData: any[] = handleData();
+
+//let persData: any[] | (() => PersType[]);
+
+/*MeApi.getDataFromAPI().then(data => {
+    persData = data;  // Now persData will hold the fetched data
+    console.log(persData);
+}).catch(error => {
+    console.error('Error fetching data:', error);
+});*/
+/*
+function test(){
+let Data: any[] | (() => PersType[]);
+Data = useLoaderData();
+return Data;
+}*/
+
+//const persData: PersType[] = test();
+/*[
     {
         blank: '',
         fname: 'Luke',
@@ -48,12 +111,12 @@ const persData: PersType[] = [
         email: 'andris.hoiseth@chebacca.com',
         phone: '33994455'
     }
-];
+];*/
 
-
-export default function PersonsTable() {
-    
-    const [persons, setPersons] = useState<PersType[]>(persData);
+//Her blir Persons laget
+export default async function PersonsTable() {
+    /*
+    const [persons, setPersons] = useState<PersType[]>(await persData);
     //const persons = useLoaderData<PersType[]>();
     const [searchItem, setSearchItem] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -64,7 +127,31 @@ export default function PersonsTable() {
         console.log("No persons data loaded");
         return <div>No data available</div>;
     }
+*/
 
+const [persons, setPersons] = useState<PersType[]>([]);  // State to hold persons data
+const [searchItem, setSearchItem] = useState('');
+const [isEditing, setIsEditing] = useState(false);
+const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
+const [apiData, setApiData] = useState<{ [key: string]: boolean } | null>(null);
+
+useEffect(() => {
+    async function fetchAndSetData() {
+        try {
+            const persData: PersType[] = await handleData();
+            setPersons(persData);  // Set fetched data to state
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    
+    fetchAndSetData();
+}, []);  // Empty dependency array means this effect runs once after initial render
+
+if (!persons || persons.length === 0) {
+    return <div>No data available</div>;
+}
 
     const handleTestClick = async () => {
         try {
@@ -136,15 +223,17 @@ export default function PersonsTable() {
     };
 
     const renderRow = (person: PersType, index: number) => (
+
+        // Legger inn data her
         <Table.ExpandableRow key={index + person.fname} content={getApiContent(person)}>
             <Table.DataCell scope="row">
                 {person.fname + ' ' + person.lname}
-                <div>Email: {person.email}</div>
+                <div>Email: {person.mail}</div>
                 <div>Phone: {person.phone}</div>
             </Table.DataCell>
-            <Table.DataCell colSpan={4}></Table.DataCell>
+            <Table.DataCell colSpan={6}></Table.DataCell>
             <Table.Row>
-                <Table.DataCell colSpan={5}>
+                <Table.DataCell colSpan={7}>
                     <Dropdown>
                         <Button size="xsmall" as={Dropdown.Toggle} icon={<PencilIcon aria-hidden />}></Button>
                         <Dropdown.Menu>
@@ -184,7 +273,7 @@ export default function PersonsTable() {
     };
 
     const columns: { label: string; key: keyof PersType }[] = [
-        { label: '', key: 'blank' }, //empty column to move header 1 step away!
+        { label: '', key: 'id' }, //empty column to move header 1 step away!
         { label: 'Name', key: 'fname' }
     ];
 
@@ -192,10 +281,10 @@ export default function PersonsTable() {
         const updatedPersons = [...persons];
         const person = updatedPersons[personIndex];
 
-        person.apiResponse = {
+       /* person.apiResponse = {
             ...person.apiResponse,
             [key]: !(person.apiResponse && person.apiResponse[key])
-        };
+        };*/
 
         //setPersons(updatedPersons);
     };
@@ -221,5 +310,7 @@ export default function PersonsTable() {
         </div>
     );
 }
-
-export { persData };
+export async function getPersData() {
+    return await handleData();
+}
+//export { persData };
