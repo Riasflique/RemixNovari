@@ -41,7 +41,7 @@ async function getData(): Promise<PersType[]> {
         return [JSON.parse(json)];  
     } catch (error) {
         console.log("GETDATA ERROR: " + error);
-        return [];  // Return an empty array in case of an error
+        return [];
     }
 }
 //console.log("RAW DATA: " + JSON.stringify(getData(), null, 2));
@@ -60,7 +60,7 @@ async function handleData(): Promise<PersType[]> {
         return apiData;
     } catch (error) {
         console.error("Error fetching data: " + error);
-        return [];  // Return an empty array on error, ensuring return type is consistent
+        return []; 
     }
 }
 
