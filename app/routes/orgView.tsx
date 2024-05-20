@@ -8,10 +8,10 @@ export default function OrgView() {
   const location = useLocation();
   const { org } = location.state;
   const [selectedTab, setSelectedTab] = useState("contacts");
-  const [orgName, setOrgName] = useState(org.orgName); 
-  const [orgNumber, setOrgNumber] = useState(org.orgNumber);
-  const [editedOrgName, setEditedOrgName] = useState(org.orgName); 
-  const [editedOrgNumber, setEditedOrgNumber] = useState(org.orgNumber); 
+  const [org_Name, setOrgName] = useState(org.org_Name); 
+  const [org_Number, setOrgNumber] = useState(org.org_Number);
+  const [editedOrgName, setEditedOrgName] = useState(org.org_Name); 
+  const [editedOrgNumber, setEditedOrgNumber] = useState(org.org_Number); 
   const [editedContact, setEditedContact] = useState("")
   const [contactsCount, setContactsCount] = useState(0);
   const [componentCount, setcomponentCount] = useState(0);
@@ -59,8 +59,8 @@ export default function OrgView() {
     <div style={ViewOrgStyle}>
       <Heading size='xlarge' icon={<Buildings3Icon aria-hidden />}>Organizations</Heading>
       <div>
-        <h3>{orgName}</h3>
-        <p>Org number: {orgNumber}</p>
+        <h3>{org_Name}</h3>
+        <p>Org number: {org_Number}</p>
         <p>Primary Asset Id: {org.AssetId}</p>
         <p>Legal Contact: {editedContact}</p>
         <div className='Tabs'>

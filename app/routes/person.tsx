@@ -1,60 +1,36 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Button, Table, Search, Heading, Checkbox, Dropdown } from "@navikt/ds-react";
-import { PersonGroupIcon, PencilIcon } from "@navikt/aksel-icons";
+import { LoaderFunction, json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import MeApi from "~/api/me-api";
+import React, { useState } from "react";
+import { Button, Table, Dropdown } from "@navikt/ds-react";
+import { PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
 import EditPersonModal from "~/components/layout-modal";
-import MeApi from "~/api/me-api";
-import { LinksFunction, LoaderFunction, MetaFunction, json } from "@remix-run/node";
-import { findKey } from "node_modules/cypress/types/lodash";
-import fs from 'fs/promises';
-import path from 'path';
-import { useLoaderData } from "@remix-run/react"
 
 export type PersType = {
-    blank: string;
+    blank: any;
+    apiResponse?: { [key: string]: boolean };
     fname: string;
     lname: string;
-    email: string;
+    id: number;
+    access: string;
     phone: string;
-    apiResponse?: { [key: string]: boolean };
+    mail: string;
 };
 
-const persData: PersType[] = [
-    {
-        blank: '',
-        fname: 'Luke',
-        lname: 'Skywalker',
-        email: 'luke.skywalker@rebelalliance.com',
-        phone: '99440055'
-    },
-    {
-        blank: '',
-        fname: 'Anakin',
-        lname: 'Skywalker',
-        email: 'Anakin.skywalker@galacticempire.com',
-        phone: '99550066'
-    },
-    {
-        blank: '',
-        fname: 'Thomas',
-        lname: 'Kirkeng',
-        email: 'thomas.kirkeng@darkside.com',
-        phone: '40493581'
-    },
-    {
-        blank: '',
-        fname: 'Andris',
-        lname: 'Hoiseth',
-        email: 'andris.hoiseth@chebacca.com',
-        phone: '33994455'
-    }
-];
+export const persData: PersType[] = [];
 
+export const loader: LoaderFunction = async () => {
+    const users = await MeApi.fetchUsers();
+    if (!users) {
+      throw new Response("Error fetching users", { status: 500 });
+    }
+    console.log("Fetched users:", users);
+    return json(users);
+};
 
 export default function PersonsTable() {
-    
-    const [persons, setPersons] = useState<PersType[]>(persData);
-    //const persons = useLoaderData<PersType[]>();
+    const persons = useLoaderData<PersType[]>();
     const [searchItem, setSearchItem] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
@@ -64,7 +40,6 @@ export default function PersonsTable() {
         console.log("No persons data loaded");
         return <div>No data available</div>;
     }
-
 
     const handleTestClick = async () => {
         try {
@@ -79,47 +54,33 @@ export default function PersonsTable() {
             console.error("Failed to fetch API data", error);
         }
     };
+
     const handleTestClick2 = async (component: string) => {
+        console.log("Kjører nuuuuuuu skibidi")
         try {
             const apiData2 = await MeApi.postPackage(component);
-            console.log("Fetched API Data: APIDATA2", apiData2);  // Dette er pakkene/komponentene
+            console.log("Fetched API Data: APIDATA2", apiData2);
             if (apiData2 && Object.keys(apiData2).length > 0) {
-                //const finString = key.replace("no.fint.model.", "")
                 setApiData(apiData2)
-                //apiData.forEach(
-                //for (let i = 0; i > apiData2.length; i++) { // brukes for-løkka så kommer det ingenting ut
-                //    try {
-                //let apiTest: { [key: string]: boolean; } | undefined
                 for (const key in apiData2) {
-                    console.log(key); // Output: 'key1', 'key2'
+                    console.log(key);
                     const nyKey = key.replace("no.fint.model.", "")
                     try {
                         const apiTest = await MeApi.postComponent(nyKey)
                         if (apiTest) {
                             console.log("api TEST - ", apiTest)
-                            //setApiData(apiTest);
                         }
                     } catch (error) {
                         console.error("Ressurs-fetchen feilet", error);
                     }
                 }
-                /*
-                                const updatedPersons = persons.map(person => ({
-                                    ...person,
-                                    apiResponse: { ...person.apiResponse, ...apiTest }
-                                }));
-                                setPersons(updatedPersons);
-                                console.log("YEEEEEHAW")
-                                */
             } else {
                 console.log("No valid data received from API");
             }
         } catch (error) {
             console.error("Failed to fetch API data", error);
         }
-        //setIsTestClicked(true);
     };
-
 
     const editPopupWindow = (person: PersType) => {
         setEditingPerson(person);
@@ -139,7 +100,7 @@ export default function PersonsTable() {
         <Table.ExpandableRow key={index + person.fname} content={getApiContent(person)}>
             <Table.DataCell scope="row">
                 {person.fname + ' ' + person.lname}
-                <div>Email: {person.email}</div>
+                <div>Email: {person.mail}</div>
                 <div>Phone: {person.phone}</div>
             </Table.DataCell>
             <Table.DataCell colSpan={4}></Table.DataCell>
@@ -170,7 +131,6 @@ export default function PersonsTable() {
             return "No data available";
         }
 
-
         return (
             <div>
                 <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
@@ -179,12 +139,11 @@ export default function PersonsTable() {
     };
 
     const handleSaveClick = async (persons: PersType) => {
-        // Handle save action for the person here
         console.log("Saving changes for:", persons);
     };
 
     const columns: { label: string; key: keyof PersType }[] = [
-        { label: '', key: 'blank' }, //empty column to move header 1 step away!
+        { label: '', key: 'blank' },
         { label: 'Name', key: 'fname' }
     ];
 
@@ -196,8 +155,6 @@ export default function PersonsTable() {
             ...person.apiResponse,
             [key]: !(person.apiResponse && person.apiResponse[key])
         };
-
-        //setPersons(updatedPersons);
     };
 
     return (
@@ -210,7 +167,6 @@ export default function PersonsTable() {
                 renderRow={renderRow}
                 tableType="Clients"
             />
-
             <EditPersonModal
                 isOpen={isEditing}
                 persons={editingPerson}
@@ -221,5 +177,3 @@ export default function PersonsTable() {
         </div>
     );
 }
-
-export { persData };

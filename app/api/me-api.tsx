@@ -1,11 +1,12 @@
 import { method } from "node_modules/cypress/types/bluebird";
 import { SetStateAction, useState } from "react";
 import { json } from "@remix-run/node";
+import { PersType } from "~/routes/person";
 
 // const APIURL = "http://localhost:8080/resource"
 // const API_URL = process.env.APIURL;
 
-const baseURL = "http://localhost:8080/ansatte";
+const baseURL = "http://localhost:8080";
 
 class MeApi {
     static updatePerson(updatedPerson: any) {
@@ -15,7 +16,7 @@ class MeApi {
 
     static async fetchDisplayName() {
         try {
-            const response = await fetch("http://localhost:8080/api/resource");
+            const response = await fetch(`${baseURL}/api/resource`);
             if (response.ok) {
                 const data = await response.json();
                 // console.log(data);
@@ -34,7 +35,7 @@ class MeApi {
     static async postComponent(c: string) {
         try {
             //const fraApi = document.getElementById("component")?.innerText;
-            await fetch("http://localhost:8080/api/resourceString", {
+            await fetch(`${baseURL}/api/resourceString`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Cors': ''
@@ -54,7 +55,7 @@ class MeApi {
 
     static async getResources() {
         try {
-            const response = await fetch("http://localhost:8080/api/getResources", {
+            const response = await fetch(`${baseURL}/api/getResources`, {
                 method: 'GET'
             });
             if (!response.ok) {
@@ -70,7 +71,7 @@ class MeApi {
     static async postPackage(p: string) {
         try {
             //const fraApi = document.getElementById("component")?.innerText;
-            await fetch("http://localhost:8080/api/packageString", {
+            await fetch(`${baseURL}/api/packageString`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Cors': ''
@@ -88,11 +89,63 @@ class MeApi {
         }
     };
 
+    static async fetchUsers() {
+        try {
+            const response = await fetch(`${baseURL}/api/getUsers`);
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error("Error fetching users");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching users", error);
+            return null;
+        }
+    }
+
+    static async fetchOrgs() {
+        try {
+            const response = await fetch(`${baseURL}/api/getOrgs`);
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error("Error fetching organizations");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching organizations", error);
+            return null;
+        }
+    }
+
+    static async addUser(newUser: PersType) {
+        try {
+            const response = await fetch(`${baseURL}/api/setUsers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors',
+                body: JSON.stringify(newUser)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to add user. Network response was not ok.');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("AddUser error: ", error);
+            throw error;
+        }
+    }
+
 
     static async getPackages() {
         try {
-            const response = await fetch("http://localhost:8080/api/getPackages", {
-                method: 'GET'
+            const response = await fetch(`${baseURL}/api/getPackages`, {
+                method: 'GET',
+                mode: 'no-cors',
             });
             if (!response.ok) {
                 throw new Error('Failed to get resource. Network response was not ok.');

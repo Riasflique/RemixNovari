@@ -1,44 +1,50 @@
 import React, { useState } from "react";
 import { Button, Table } from "@navikt/ds-react";
-import { PersonIcon, PencilIcon } from "@navikt/aksel-icons";
+import { PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
-import { useNavigate } from "@remix-run/react";
-
+import { useLoaderData, useNavigate } from "@remix-run/react";
+import { LoaderFunction, json } from "@remix-run/node";
+import MeApi from "~/api/me-api";
 
 export type OrgType = {
-  orgName: string;
-  AssetId: string;
-  orgNumber: string; // Add orgNumber property
+  org_Name: string;
+  Asset_Id: string;
+  org_Number: string;
 };
 
-
-const orgData: OrgType[] = [
-  { orgName: "Alliance to Restore the Republic", AssetId: "Rebel.Alliance", orgNumber: "123456" },
-  { orgName: "Bespin Gas Mining", AssetId: "Cloud.city", orgNumber: "223344" },
-  { orgName: "Corellia Shipyards", AssetId: "Corellia.shipyards", orgNumber: "334455" },
-  { orgName: "Imperial Forces", AssetId: "Galactic.empire", orgNumber: "445566" },
-  { orgName: "Jedi Archives", AssetId: "jedi.order", orgNumber: "556677" },
-];
+export const loader: LoaderFunction = async () => {
+  const orgs = await MeApi.fetchOrgs();
+  if (!orgs) {
+    throw new Response("Error fetching orgs", { status: 500 });
+  }
+  console.log("Fetched orgs:", orgs);
+  return json(orgs);
+};
 
 export default function OrganizationTable() {
+  const orgData = useLoaderData<OrgType[]>();
   const [searchItem, setSearchItem] = useState('');
-  
+
   const handleSearchChange = (value: string) => {
     setSearchItem(value);
   };
 
   const columns: {label: string, key: keyof OrgType}[] = [
-    { label: 'Name', key: 'orgName' },
-    { label: 'Asset Id', key: 'AssetId' },
+    { label: 'Name', key: 'org_Name' },
+    { label: 'Org Number', key: 'org_Number' },
+    { label: 'Asset Id', key: 'Asset_Id' }
   ];
 
   const navigate = useNavigate();
 
   const renderRow = (org: OrgType, index: number) => (
-    <Table.Row key={index} content="">
-      <Table.DataCell scope="row">{org.orgName}</Table.DataCell>
-      <Table.DataCell>{org.AssetId}</Table.DataCell>
-      <Button size="xsmall" icon={<PencilIcon title="View"/>} onClick={() => navigate("/orgView", { state: { org } })} />
+    <Table.Row key={index}>
+      <Table.DataCell scope="row">{org.org_Name}</Table.DataCell>
+      <Table.DataCell>{org.org_Number}</Table.DataCell>
+      <Table.DataCell>{org.Asset_Id}</Table.DataCell>
+      <Table.DataCell>
+        <Button size="xsmall" icon={<PencilIcon title="View" />} onClick={() => navigate("/orgView", { state: { org } })} />
+      </Table.DataCell>
     </Table.Row>
   );
 
@@ -53,5 +59,3 @@ export default function OrganizationTable() {
     />
   );
 }
-
-export{orgData}
