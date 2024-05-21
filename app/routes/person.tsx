@@ -144,7 +144,7 @@ export default function PersonsTable() {
 
         return (
             <div>
-            <Heading size="small">Tilganger</Heading>
+            <Heading size="medium">Tilganger</Heading>
             <ul>
                 {relevantData.map((item, index) => (
                     <li key={index}>{item}</li>
