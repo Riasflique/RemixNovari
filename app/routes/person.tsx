@@ -1,3 +1,5 @@
+// PersonsTable.tsx
+
 import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import MeApi from "~/api/me-api";

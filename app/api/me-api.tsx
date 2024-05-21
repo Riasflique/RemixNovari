@@ -1,26 +1,12 @@
+// MeApi.ts
+
 import { PersType } from "~/routes/person";
 
 const baseURL = "http://localhost:8080";
 
 class MeApi {
-    static async updatePerson(updatedPerson: PersType) {
-        try {
-            const response = await fetch(`${baseURL}/api/updateUser`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedPerson)
-            });
-            if (!response.ok) {
-                throw new Error('Failed to update user. Network response was not ok.');
-            }
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error("UpdatePerson error: ", error);
-            throw error;
-        }
+    static updatePerson(updatedPerson: any) {
+        throw new Error("Method not implemented.");
     }
 
     static async fetchDisplayName() {
@@ -45,6 +31,7 @@ class MeApi {
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
+                mode: 'cors',
                 body: JSON.stringify({ c })
             });
             const resourceData = await MeApi.getResources();
@@ -77,6 +64,7 @@ class MeApi {
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
+                mode: 'cors',
                 body: JSON.stringify({ p })
             });
             const packageData = await MeApi.getPackages();
@@ -124,6 +112,7 @@ class MeApi {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                mode: 'cors',
                 body: JSON.stringify(newUser)
             });
             if (!response.ok) {
@@ -140,7 +129,9 @@ class MeApi {
     static async getPackages() {
         try {
             const response = await fetch(`${baseURL}/api/getPackages`, {
-                method: 'GET'
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include'
             });
             if (!response.ok) {
                 throw new Error('Failed to get resource. Network response was not ok.');
