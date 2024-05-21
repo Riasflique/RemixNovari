@@ -1,6 +1,4 @@
-// EditPersonModal.tsx
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Table, Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { PersType } from '~/routes/person';
 import MeApi from "~/api/me-api";
@@ -15,31 +13,35 @@ type EditPersonModalProps = {
 
 export default function EditPersonModal({ isOpen, persons, onSave, onClose, apiData }: EditPersonModalProps) {
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
-    const [checkboxState, setCheckboxState] = useState<{ [key: string]: boolean }>({});
+    const [selectedValues, setSelectedValues] = useState<string[]>([]);
     const [resourcesByMaster, setResourcesByMaster] = useState<{ [key: string]: string[] }>({});
-    const [packages, setPackages] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (persons && persons.apiResponse) {
+            setSelectedValues(Object.keys(persons.apiResponse).filter(key => persons.apiResponse![key]));
+        }
+    }, [persons]);
+
+    useEffect(() => {
+        if (apiData) {
+            const initialChecked = Object.keys(apiData).filter(key => apiData[key]);
+            setSelectedValues(initialChecked);
+        }
+    }, [apiData]);
 
     const handleMasterCheckboxChange = (key: string, isChecked: boolean) => {
-        const newStates = { ...checkboxState, [key]: isChecked };
-        if (resourcesByMaster[key]) {
-            resourcesByMaster[key].forEach(resource => {
-                newStates[`${key}.${resource}`] = isChecked;
-            });
+        let newValues = [...selectedValues];
+        if (isChecked) {
+            newValues.push(key);
+            if (resourcesByMaster[key]) {
+                resourcesByMaster[key].forEach(resource => {
+                    newValues.push(`${key}.${resource}`);
+                });
+            }
+        } else {
+            newValues = newValues.filter(item => item !== key && !item.startsWith(`${key}.`));
         }
-        setCheckboxState(newStates);
-    };
-
-    const handleCheckboxChanges = (masterKey: string, resourceKey: string, isChecked: boolean) => {
-        const newStates = { ...checkboxState, [`${masterKey}.${resourceKey}`]: isChecked };
-        if (masterKey === resourceKey && resourcesByMaster[masterKey]) {
-            resourcesByMaster[masterKey].forEach(resource => {
-                newStates[`${masterKey}.${resource}`] = isChecked;
-            });
-        } else if (resourcesByMaster[masterKey]) {
-            const allChecked = resourcesByMaster[masterKey].every(resource => newStates[`${masterKey}.${resource}`]);
-            newStates[masterKey] = allChecked;
-        }
-        setCheckboxState(newStates);
+        setSelectedValues(newValues);
     };
 
     const toggleRow = async (key: string) => {
@@ -60,22 +62,13 @@ export default function EditPersonModal({ isOpen, persons, onSave, onClose, apiD
         }
     };
 
-    const handleFetchPackages = async () => {
-        try {
-            const fetchedPackages = await MeApi.getPackages();
-            if (fetchedPackages) {
-                setPackages(fetchedPackages);
-            } else {
-                console.error("No packages fetched");
-            }
-        } catch (error) {
-            console.error("Failed to fetch packages", error);
-        }
-    };
-
     const handleSave = () => {
         if (persons) {
-            onSave(persons);
+            const updatedPerson = { 
+                ...persons, 
+                apiResponse: Object.fromEntries(selectedValues.map(key => [key, true])) 
+            };
+            onSave(updatedPerson);
         }
         onClose();
     };
@@ -90,7 +83,8 @@ export default function EditPersonModal({ isOpen, persons, onSave, onClose, apiD
                                 <Table.DataCell>
                                     <Checkbox
                                         id={`checkbox-${key}`}
-                                        checked={checkboxState[key] || false}
+                                        value={key}
+                                        checked={selectedValues.includes(key)}
                                         onChange={e => handleMasterCheckboxChange(key, e.target.checked)}
                                     >
                                         <Button variant="tertiary-neutral" className="expand-button" onClick={() => toggleRow(key)}>{key.replace("no.fint.model.", "")}</Button>
@@ -100,13 +94,12 @@ export default function EditPersonModal({ isOpen, persons, onSave, onClose, apiD
                             {expandedRows.includes(key) && resourcesByMaster[key] && (
                                 <Table.Row>
                                     <Table.DataCell colSpan={1}>
-                                        <CheckboxGroup legend="Resources" hideLegend={true} size='small'>
+                                        <CheckboxGroup legend="Resources" hideLegend={true} size='small' value={selectedValues} onChange={setSelectedValues}>
                                             {resourcesByMaster[key].map((resource) => (
                                                 <Checkbox
                                                     id={`checkbox-${key}-${resource}`}
                                                     key={`${key}.${resource}`}
-                                                    checked={checkboxState[`${key}.${resource}`] || false}
-                                                    onChange={e => handleCheckboxChanges(key, resource, e.target.checked)}
+                                                    value={`${key}.${resource}`}
                                                 >
                                                     {resource}
                                                 </Checkbox>
@@ -118,14 +111,6 @@ export default function EditPersonModal({ isOpen, persons, onSave, onClose, apiD
                         </React.Fragment>
                     ))}
                 </Table>
-                <Button onClick={handleFetchPackages}>Hent</Button>
-                {packages.length > 0 && (
-                    <ul>
-                        {packages.map((pkg, index) => (
-                            <li key={index}>{pkg}</li>
-                        ))}
-                    </ul>
-                )}
             </Modal.Body>
             <Modal.Footer>
                 <Button id="cancel-button" variant="danger" onClick={onClose}>Cancel</Button>

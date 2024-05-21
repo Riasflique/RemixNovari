@@ -1,13 +1,12 @@
-// PersonsTable.tsx
-
 import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import MeApi from "~/api/me-api";
-import React, { useState } from "react";
-import { Button, Table, Dropdown } from "@navikt/ds-react";
+import React, { useState, useEffect } from "react";
+import { Button, Table, Dropdown, Heading } from "@navikt/ds-react";
 import { PencilIcon } from "@navikt/aksel-icons";
 import LayoutTable from "~/components/layout-table";
 import EditPersonModal from "~/components/layout-modal";
+import Header from "@navikt/ds-react/esm/table/Header";
 
 export type PersType = {
     blank: any;
@@ -20,52 +19,51 @@ export type PersType = {
     mail: string;
 };
 
-export const persData: PersType[] = [];
+export const persData: PersType[] = []; // Ensure this is exported
+
+
+const transformData = (data: any[]): PersType[] => {
+    return data.map(item => ({
+        blank: item.blank ?? null,
+        apiResponse: item.apiResponse || {},
+        fname: item.fname,
+        lname: item.lname,
+        id: item.id,
+        access: item.access,
+        phone: item.phone,
+        mail: item.mail,
+    }));
+};
 
 export const loader: LoaderFunction = async () => {
     const users = await MeApi.fetchUsers();
     if (!users) {
         throw new Response("Error fetching users", { status: 500 });
     }
-    console.log("Fetched users:", users);
-    return json(users);
+    const transformedUsers = transformData(users);
+    console.log("Fetched and transformed users:", transformedUsers);
+    return json(transformedUsers);
 };
 
 export default function PersonsTable() {
-    const persons = useLoaderData<PersType[]>();
+    const personsData = useLoaderData<PersType[]>();
     const [searchItem, setSearchItem] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [editingPerson, setEditingPerson] = useState<PersType | null>(null);
     const [apiData, setApiData] = useState<{ [key: string]: boolean } | null>(null);
+    const [persons, setPersons] = useState<PersType[]>([]);
 
-    if (!persons || persons.length === 0) {
-        console.log("No persons data loaded");
-        return <div>No data available</div>;
-    }
+    useEffect(() => {
+        setPersons(personsData as PersType[]);
+    }, [personsData]);
 
-    const handleTestClick = async () => {
-        try {
-            const apiData = await MeApi.postComponent("okonomi.faktura");
-            console.log("Fetched API Data:", apiData);
-            if (apiData && Object.keys(apiData).length > 0) {
-                setApiData(apiData);
-            } else {
-                console.log("No valid data received from API");
-            }
-        } catch (error) {
-            console.error("Failed to fetch API data", error);
-        }
-    };
-
-    const handleTestClick2 = async (component: string) => {
-        console.log("Kjører nuuuuuuu skibidi");
+    const handleTestClick2 = async (component: string, person: PersType) => {
         try {
             const apiData2 = await MeApi.postPackage(component);
             console.log("Fetched API Data: APIDATA2", apiData2);
             if (apiData2 && Object.keys(apiData2).length > 0) {
                 setApiData(apiData2);
                 for (const key in apiData2) {
-                    console.log(key);
                     const nyKey = key.replace("no.fint.model.", "");
                     try {
                         const apiTest = await MeApi.postComponent(nyKey);
@@ -76,6 +74,7 @@ export default function PersonsTable() {
                         console.error("Ressurs-fetchen feilet", error);
                     }
                 }
+                editPopupWindow(person, apiData2);
             } else {
                 console.log("No valid data received from API");
             }
@@ -84,12 +83,18 @@ export default function PersonsTable() {
         }
     };
 
-    const editPopupWindow = (person: PersType) => {
+    const editPopupWindow = (person: PersType, apiData: { [key: string]: boolean }) => {
         setEditingPerson(person);
+        setApiData(apiData);
         setIsEditing(true);
     };
 
     const saveChanges = async (updatedPerson: PersType) => {
+        setPersons(prevPersons =>
+            prevPersons.map(p =>
+                p.id === updatedPerson.id ? updatedPerson : p
+            )
+        );
         await MeApi.updatePerson(updatedPerson);
         setIsEditing(false);
     };
@@ -113,13 +118,13 @@ export default function PersonsTable() {
                         <Dropdown.Menu>
                             <Dropdown.Menu.GroupedList>
                                 <Dropdown.Menu.GroupedList.Heading>Domains</Dropdown.Menu.GroupedList.Heading>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("administrasjon"); editPopupWindow(person) }}>Administrasjon</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("arkiv"); editPopupWindow(person) }}>Arkiv</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("felles"); editPopupWindow(person) }}>Felles</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("personvern"); editPopupWindow(person) }}>Personvern</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("ressurser"); editPopupWindow(person) }}>Ressurser</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("utdanning"); editPopupWindow(person) }}>Utdanning</Dropdown.Menu.GroupedList.Item>
-                                <Dropdown.Menu.GroupedList.Item onClick={() => { handleTestClick2("okonomi"); editPopupWindow(person) }}>Økonomi</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("administrasjon", person)}>Administrasjon</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("arkiv", person)}>Arkiv</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("felles", person)}>Felles</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("personvern", person)}>Personvern</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("ressurser", person)}>Ressurser</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("utdanning", person)}>Utdanning</Dropdown.Menu.GroupedList.Item>
+                                <Dropdown.Menu.GroupedList.Item onClick={() => handleTestClick2("okonomi", person)}>Økonomi</Dropdown.Menu.GroupedList.Item>
                             </Dropdown.Menu.GroupedList>
                         </Dropdown.Menu>
                     </Dropdown>
@@ -129,13 +134,22 @@ export default function PersonsTable() {
     );
 
     const getApiContent = (person: PersType) => {
-        if (!apiData || Object.keys(apiData).length === 0) {
+        if (!person.apiResponse || Object.keys(person.apiResponse).length === 0) {
             return "No data available";
         }
+        
+        const relevantData = Object.entries(person.apiResponse)
+            .filter(([key, value]) => value)
+            .map(([key]) => key.replace("no.fint.model.", ""));
 
         return (
             <div>
-                <Button size="xsmall" onClick={() => handleSaveClick(person)}>Save</Button>
+            <Heading size="small">Tilganger</Heading>
+            <ul>
+                {relevantData.map((item, index) => (
+                    <li key={index}>{item}</li>
+                ))}
+            </ul>
             </div>
         );
     };
@@ -148,16 +162,6 @@ export default function PersonsTable() {
         { label: '', key: 'blank' },
         { label: 'Name', key: 'fname' }
     ];
-
-    const handleCheckBoxChange = (personIndex: number, key: string) => {
-        const updatedPersons = [...persons];
-        const person = updatedPersons[personIndex];
-
-        person.apiResponse = {
-            ...person.apiResponse,
-            [key]: !(person.apiResponse && person.apiResponse[key])
-        };
-    };
 
     return (
         <div>

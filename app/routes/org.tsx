@@ -7,9 +7,9 @@ import { LoaderFunction, json } from "@remix-run/node";
 import MeApi from "~/api/me-api";
 
 export type OrgType = {
-  org_Name: string;
-  Asset_Id: string;
-  org_Number: string;
+  orgname: string;
+  assetid: string;
+  orgnumber: string;
 };
 
 export const loader: LoaderFunction = async () => {
@@ -30,18 +30,18 @@ export default function OrganizationTable() {
   };
 
   const columns: {label: string, key: keyof OrgType}[] = [
-    { label: 'Name', key: 'org_Name' },
-    { label: 'Org Number', key: 'org_Number' },
-    { label: 'Asset Id', key: 'Asset_Id' }
+    { label: 'Name', key: 'orgname' },
+    { label: 'Org Number', key: 'orgnumber' },
+    { label: 'Asset Id', key: 'assetid' }
   ];
 
   const navigate = useNavigate();
 
   const renderRow = (org: OrgType, index: number) => (
     <Table.Row key={index}>
-      <Table.DataCell scope="row">{org.org_Name}</Table.DataCell>
-      <Table.DataCell>{org.org_Number}</Table.DataCell>
-      <Table.DataCell>{org.Asset_Id}</Table.DataCell>
+      <Table.DataCell scope="row">{org.orgname}</Table.DataCell>
+      <Table.DataCell>{org.orgnumber}</Table.DataCell>
+      <Table.DataCell>{org.assetid}</Table.DataCell>
       <Table.DataCell>
         <Button size="xsmall" icon={<PencilIcon title="View" />} onClick={() => navigate("/orgView", { state: { org } })} />
       </Table.DataCell>

@@ -22,10 +22,11 @@ export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles 
 //  return json(await fetchDisplayName());
 
 // }
+/*
 export const loader: LoaderFunction = ({ request }) => {
   return json(MeApi.fetchDisplayName());
 }
-
+*/
 
 export default function Dashboard() {
   const indexStyle = {

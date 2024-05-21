@@ -5,8 +5,36 @@ import { PersType } from "~/routes/person";
 const baseURL = "http://localhost:8080";
 
 class MeApi {
-    static updatePerson(updatedPerson: any) {
-        throw new Error("Method not implemented.");
+    // Mock api for test
+    /*
+    static async updatePerson(person: PersType) {
+        console.log("Mock updatePerson called with:", person);
+        // Simulate an API call delay
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                console.log("Person updated:", person);
+                resolve({ success: true });
+            }, 1000);
+        });
+    }
+    */
+    static async updatePerson(updatedPerson: PersType) {
+        try {
+            const response = await fetch(`${baseURL}/api/updatePersons`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedPerson)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update person. Network response was not ok.');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error("UpdatePerson error: ", error);
+            throw error;
+        }
     }
 
     static async fetchDisplayName() {
@@ -92,7 +120,7 @@ class MeApi {
 
     static async fetchOrgs() {
         try {
-            const response = await fetch(`${baseURL}/api/getOrgs`);
+            const response = await fetch(`${baseURL}/orgApi/getOrgs`);
             if (response.ok) {
                 return await response.json();
             } else {
