@@ -23,7 +23,7 @@ export const persData: PersType[] = [];
 export const loader: LoaderFunction = async () => {
     const users = await MeApi.fetchUsers();
     if (!users) {
-      throw new Response("Error fetching users", { status: 500 });
+        throw new Response("Error fetching users", { status: 500 });
     }
     console.log("Fetched users:", users);
     return json(users);
@@ -56,19 +56,19 @@ export default function PersonsTable() {
     };
 
     const handleTestClick2 = async (component: string) => {
-        console.log("Kjører nuuuuuuu skibidi")
+        console.log("Kjører nuuuuuuu skibidi");
         try {
             const apiData2 = await MeApi.postPackage(component);
             console.log("Fetched API Data: APIDATA2", apiData2);
             if (apiData2 && Object.keys(apiData2).length > 0) {
-                setApiData(apiData2)
+                setApiData(apiData2);
                 for (const key in apiData2) {
                     console.log(key);
-                    const nyKey = key.replace("no.fint.model.", "")
+                    const nyKey = key.replace("no.fint.model.", "");
                     try {
-                        const apiTest = await MeApi.postComponent(nyKey)
+                        const apiTest = await MeApi.postComponent(nyKey);
                         if (apiTest) {
-                            console.log("api TEST - ", apiTest)
+                            console.log("api TEST - ", apiTest);
                         }
                     } catch (error) {
                         console.error("Ressurs-fetchen feilet", error);
