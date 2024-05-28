@@ -10,7 +10,7 @@ interface AddNewPersonModalProps {
     onSave: (persons: PersType[]) => void;
 }
 
-// Define PersonState with all fields from PersType
+// Defineres med alt som er fra PersType i person.tsx
 type PersonState = Omit<PersType, "id" | "access" | "apiResponse"> & {
     id?: number;
     access?: string;
@@ -24,8 +24,8 @@ const AddNewPersonModal: React.FC<AddNewPersonModalProps> = ({ isOpen, onClose, 
         fname: '',
         lname: '',
         mail: '',
-        phone: '', // Initialize as number
-        id: 0, // Initialize optional fields if necessary
+        phone: '',
+        id: 0,
         access: '',
         apiResponse: null,
     };
@@ -35,7 +35,7 @@ const AddNewPersonModal: React.FC<AddNewPersonModalProps> = ({ isOpen, onClose, 
     const handleInputChange = (field: keyof PersonState, value: string) => {
         setNewPerson((prev) => ({ 
             ...prev, 
-            [field]: field === 'phone' ? Number(value) : value // Convert phone to number
+            [field]: field === 'phone' ? Number(value) : value
         }));
     };
 
@@ -49,13 +49,10 @@ const AddNewPersonModal: React.FC<AddNewPersonModalProps> = ({ isOpen, onClose, 
                 apiResponse: newPerson.apiResponse || null,
             };
 
-            // Use MeApi to add the new user
             await MeApi.addUser(personToSave);
 
-            // Fetch the updated list of users
             const updatedUsers = await MeApi.fetchUsers();
 
-            // Pass the updated list to onSave callback
             onSave(updatedUsers);
 
             resetFormAndClose();

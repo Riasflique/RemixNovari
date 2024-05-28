@@ -42,7 +42,7 @@ export default function OrgView() {
       orgName: editedOrgName,
       orgNumber: editedOrgNumber
     };
-    console.log("oppdatert: ", updatedOrg); //alt skjer lokalt nå, så er bare en random console log for å se at ting funkærrr + ny value
+    console.log("oppdatert: ", updatedOrg); //alt skjer lokalt nå, så er bare en console log for å se at ting funker + ny value
 
 
     setOrgName(editedOrgName);

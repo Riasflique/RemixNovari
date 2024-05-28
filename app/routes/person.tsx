@@ -19,7 +19,7 @@ export type PersType = {
     mail: string;
 };
 
-export const persData: PersType[] = []; // Ensure this is exported
+export const persData: PersType[] = []; // Denne må ha export
 
 
 const transformData = (data: any[]): PersType[] => {

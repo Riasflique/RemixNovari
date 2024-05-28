@@ -18,16 +18,6 @@ export const meta: MetaFunction = () => {
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: navStyles }];
 
-//export async function loader({request}: LoaderFunctionArgs) {
-//  return json(await fetchDisplayName());
-
-// }
-/*
-export const loader: LoaderFunction = ({ request }) => {
-  return json(MeApi.fetchDisplayName());
-}
-*/
-
 export default function Dashboard() {
   const indexStyle = {
     margin: '0 auto',

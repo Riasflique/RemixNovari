@@ -5,19 +5,6 @@ import { PersType } from "~/routes/person";
 const baseURL = "http://localhost:8080";
 
 class MeApi {
-    // Mock api for test
-    /*
-    static async updatePerson(person: PersType) {
-        console.log("Mock updatePerson called with:", person);
-        // Simulate an API call delay
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log("Person updated:", person);
-                resolve({ success: true });
-            }, 1000);
-        });
-    }
-    */
     static async updatePerson(updatedPerson: PersType) {
         try {
             const response = await fetch(`${baseURL}/api/updatePersons`, {
